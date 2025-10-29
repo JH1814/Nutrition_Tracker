@@ -10,7 +10,7 @@ The program validates the inputs, saves them into a file, and allows users to vi
 ## User Stories
 1.	As a user, I want to **add food entries** with date, category, and quantity so I can track my nutrition.
 
-2.	As a user, I want to **get a list of all entries** to have a full overview what I ate.
+2.	As a user, I want to **get a list of all entries** to have a full overview about what I ate.
 
 3.	As a user, I want to **view my daily and weekly totals** to understand my intake.
 
