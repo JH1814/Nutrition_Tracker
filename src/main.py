@@ -2,7 +2,7 @@
 # call controller
 import controller
 
-controller.startApp()
-
+if __name__ == "__main__":
+    controller.startApp()
 
 
