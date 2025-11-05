@@ -6,6 +6,10 @@ def writeNutritionData(data):
         writer = csv.writer(file)
         writer.writerow(data.values())
 
+
+def addEntries(data):
+    pass
+
 #request data functions
 def getAllEntries():
     pass
