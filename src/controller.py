@@ -7,14 +7,19 @@
 import model
 import view
 
+running = True
+
 def startApp():
- while True:
+ while running:
     view.showMainMenu()
     choice = input("Enter your choice: ")
     if choice == "1":
 
         # view.getNutritionInput()  # This function would get user input for nutrition data
 
+# if choice =="5":
+    #running = False
+    #exit()
 
         try :
             model.writeNutritionData({date: "2024-06-01", protein: 50, carbs: 200, fats: 70})
