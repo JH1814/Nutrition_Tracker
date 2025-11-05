@@ -26,6 +26,3 @@ def startApp():
             view.addNutritionSuccessfull()
         except FileNotFoundError as e:
             view.addNutritionFailed(e)
-
-            
-

@@ -7,7 +7,7 @@ def writeNutritionData(data):
         writer.writerow(data.values())
 
 
-def addEntries(data):
+def addEntry(data):
     pass
 
 #request data functions
