@@ -1,4 +1,5 @@
 import csv
+import datetime
 
 
 def writeNutritionData(data):
@@ -15,13 +16,27 @@ def getAllEntries():
     pass
 
 def getEntryByDate(date):
+
     pass
 
 def getEntryByName(name):
     pass
 
 def getEntriesWithinWeek(): #get the entries within last 7 days
-    pass
+    entries = []
+    one_week_ago = datetime.datetime.now() - datetime.timedelta(days=7)
+
+    with open("./data/data.csv",'r') as file:
+        # Use DictReader to treat each row as a dictionary with column headers as keys
+        reader = csv.DictReader(file)
+        for row in reader:
+            # Check if the entry is within the last 7 days
+            entry_date = datetime.strptime(row['DateTime'], '%Y-%m-%d')
+            if entry_date >= one_week_ago:
+                entries.append(row)
+
+    return entries
+
 
 #statistics functions
 def createStatistics():
