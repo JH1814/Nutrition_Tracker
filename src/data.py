@@ -2,11 +2,11 @@ import csv
 import datetime
 
 
+
 def writeNutritionData(data):
     with open("./data/data.csv", "a") as file:
         writer = csv.writer(file)
         writer.writerow(data)
-
 
 def addEntry(data):
     pass
@@ -15,12 +15,34 @@ def addEntry(data):
 def getAllEntries():
     pass
 
-def getEntryByDate(date):
+def getEntryByDate(): #get the entries of today
+    entries = []
+    today = datetime.datetime.now().date()
 
-    pass
+    with open("./data/data.csv",'r') as file:
+        # Use DictReader to treat each row as a dictionary with column headers as keys
+        reader = csv.DictReader(file)
+        for row in reader:
+            # Check if the entry is within the last 7 days
+            entry_date = datetime.datetime.fromisoformat(row['DateTime']).date()
+            if entry_date == today:
+                entries.append(row)
+
+    return entries
+
+
 
 def getEntryByName(name):
-    pass
+    entry = []
+    with open("./data/data.csv",'r') as file:
+        # Use DictReader to treat each row as a dictionary with column headers as keys
+        reader = csv.DictReader(file)
+        for row in reader:
+            if row['Name'] == name:
+                entry.append(row)
+                break
+        
+    return entry
 
 def getEntriesWithinWeek(): #get the entries within last 7 days
     entries = []
@@ -31,12 +53,11 @@ def getEntriesWithinWeek(): #get the entries within last 7 days
         reader = csv.DictReader(file)
         for row in reader:
             # Check if the entry is within the last 7 days
-            entry_date = datetime.strptime(row['DateTime'], '%Y-%m-%d')
+            entry_date = datetime.datetime.fromisoformat(row['DateTime'])
             if entry_date >= one_week_ago:
                 entries.append(row)
 
     return entries
-
 
 #statistics functions
 def createStatistics():
