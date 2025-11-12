@@ -70,13 +70,3 @@ def getEntriesWithinWeek(): #get the entries within last 7 days
 #statistics functions
 def createStatistics():
     pass
-
-#validation functions
-def validateFloat(input):
-    return float(input)
-
-def validateStr(input): #Not empty
-    return isinstance(input, str) and input.strip() != ""
-
-def validateInt(input): #return int(input) or raise error
-    return int(input)
