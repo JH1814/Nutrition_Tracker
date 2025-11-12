@@ -1,6 +1,6 @@
 # includes functions to display menus
 # includes functions to show nutrition entries
-# 
+
 
 def showMainMenu():
     print("Welcome to the Nutrition Tracker!")
@@ -13,47 +13,21 @@ def showMainMenu():
 def showStatistics():
     pass
 
-def showEntries(entries, max_width=30):
-    """
-    entries: list of dicts with keys Name, Protein, Fat, Carbs, Calories, DateTime
-    Prints a neat table to the console.
-    """
+def showEntries(entries):
+
     if not entries:
         print("No entries found.")
         return
 
-    # Define columns and header order
-    cols = ["Name", "Protein", "Fat", "Carbs", "Calories", "DateTime"]
+    # create header
+    headers = ["Name", "Protein", "Fat", "Carbs", "Calories"]
+    print(f"{headers[0]:<30} {headers[1]:<10} {headers[2]:<10} {headers[3]:<10} {headers[4]:<10}")
+    print("-" * 80)
 
-    # Prepare rows as strings and compute column widths
-    rows = []
-    widths = {c: len(c) for c in cols}
-    for e in entries:
-        row = {}
-        for c in cols:
-            val = e.get(c, "")
-            # Convert numeric-like values to string with no extra decimals
-            if isinstance(val, float):
-                s = f"{val:.2f}"
-            else:
-                s = str(val)
-            # shorten long strings (like long names) for display
-            if len(s) > max_width and c == "Name":
-                s = s[: max_width - 3] + "..."
-            row[c] = s
-            widths[c] = max(widths[c], len(s))
-        rows.append(row)
+    for entry in entries:
+        print(f"{entry.get('Name',''):<30} {entry.get('Protein',''):<10} {entry.get('Fat',''):<10} {entry.get('Carbs',''):<10} {entry.get('Calories',''):<10}")
 
-    # Build format string
-    sep = " | "
-    header = sep.join(c.ljust(widths[c]) for c in cols)
-    divider = "-+-".join("-" * widths[c] for c in cols)
-
-    # Print
-    print(header)
-    print(divider)
-    for r in rows:
-        print(sep.join(r[c].ljust(widths[c]) for c in cols))
+    
 
 def addNutritionSuccessfull():
     print("Nutrition data added successfully!")
