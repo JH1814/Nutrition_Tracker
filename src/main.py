@@ -32,6 +32,11 @@ def main():
         
         except FileNotFoundError as e:
            ui.addNutritionFailed(e)
+           
+    if choice == "3":
+        entries = data.getAllEntries()
+        ui.showEntries(entries)
+       
 
 # if choice =="5":
     #running = False

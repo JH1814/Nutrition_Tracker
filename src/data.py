@@ -13,7 +13,15 @@ def addEntry(data):
 
 #request data functions
 def getAllEntries():
-    pass
+    entries = []
+    with open("./data/data.csv",'r') as file:
+        # Use DictReader to treat each row as a dictionary with column headers as keys
+        reader = csv.DictReader(file)
+        for i in range(10):
+            row = next(reader)
+            entries.append(row)
+        
+    return entries
 
 def getEntryByDate(): #get the entries of today
     entries = []

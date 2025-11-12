@@ -22,5 +22,44 @@ def getNutritionInput():
 def showStatistics():
     pass
 
-def showEntries(entries):
-    pass
+def showEntries(entries, max_width=30):
+    """
+    entries: list of dicts with keys Name, Protein, Fat, Carbs, Calories, DateTime
+    Prints a neat table to the console.
+    """
+    if not entries:
+        print("No entries found.")
+        return
+
+    # Define columns and header order
+    cols = ["Name", "Protein", "Fat", "Carbs", "Calories", "DateTime"]
+
+    # Prepare rows as strings and compute column widths
+    rows = []
+    widths = {c: len(c) for c in cols}
+    for e in entries:
+        row = {}
+        for c in cols:
+            val = e.get(c, "")
+            # Convert numeric-like values to string with no extra decimals
+            if isinstance(val, float):
+                s = f"{val:.2f}"
+            else:
+                s = str(val)
+            # shorten long strings (like long names) for display
+            if len(s) > max_width and c == "Name":
+                s = s[: max_width - 3] + "..."
+            row[c] = s
+            widths[c] = max(widths[c], len(s))
+        rows.append(row)
+
+    # Build format string
+    sep = " | "
+    header = sep.join(c.ljust(widths[c]) for c in cols)
+    divider = "-+-".join("-" * widths[c] for c in cols)
+
+    # Print
+    print(header)
+    print(divider)
+    for r in rows:
+        print(sep.join(r[c].ljust(widths[c]) for c in cols))
