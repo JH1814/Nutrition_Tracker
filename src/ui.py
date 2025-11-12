@@ -19,14 +19,16 @@ def addNutritionFailed(error):
 def invalidChoice():
     print("Invalid choice. Please try again.")
 
-def getStrintInput(message): 
+def getStringInput(message):  #not null string
     is_valid = False
     while not is_valid:
         try: 
             string = input(message)
+            if not string:
+                raise ValueError("Input cannot be empty.")
             is_valid = True
         except ValueError as e:
-            print(f"Invalid input. Please enter a valid integer. {e}")
+            print(f"Invalid input. Please enter a valid string. {e}")
     return string
 
 def getFloatInput(message):
