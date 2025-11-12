@@ -8,9 +8,8 @@ def main():
     while is_running:
         ui.showMainMenu()
         choice = ui.getIntInput("Enter your choice: ")
-        print(choice)
         if choice == 1:
-            name = ui.getStrintInput("Add Name of Nutrition Entry: ")
+            name = ui.getStringInput("Add Name of Nutrition Entry: ")
             carbs = ui.getFloatInput("Add Carbs in grams: ")
             protein = ui.getFloatInput("Add Protein in grams: ")
             fats = ui.getFloatInput("Add Fats in grams: ")
