@@ -9,27 +9,29 @@ def main():
     ui.showMainMenu()
     choice = input("Enter your choice: ")
     if choice == "1":
-        name = print("Add Name of Nutrition Entry")
-        carbs = print("Add Carbs in grams")
-        protein = print("Add Protein in grams")
-        fats = print("Add Fats in grams")
+        name = input("Add Name of Nutrition Entry")
+        carbs = input("Add Carbs in grams")
+        protein = input("Add Protein in grams")
+        fats = input("Add Fats in grams")
+        calories = input("Add Calories in kcal")
         date = datetime.datetime.now()
 
         try :
-            data.writeNutritionData({"Name": name, "Carbs": carbs, "Protein": protein, "Fats": fats, "Date": date})
+            data.writeNutritionData((name,  protein, fats, carbs, calories, date))
             ui.addNutritionSuccessfull()
         except FileNotFoundError as e:
             ui.addNutritionFailed(e)
 
     if choice == "2":
-        recipie = input("Enter the name of the recipe to use from the Nutrition Entry List: ")
-        entries = data.getEntryByName(recipie)
-       
+        recipe = input("Enter the name of the recipe to use from the Nutrition Entry List: ")
+        entry = data.getEntryByName(recipe)
+
         try :
-            data.writeNutritionData({"Name": entries.name, "Carbs": entries.carbs, "Protein": entries.protein, "Fats": fats, "Date": entries.date})
-            ui.addNutritionSuccessfull()
+           data.writeNutritionData((entry[0]["Name"], entry[0]["Protein"], entry[0]["Fat"], entry[0]["Carbs"], entry[0]["Calories"], datetime.datetime.now()))
+           ui.addNutritionSuccessfull()
+        
         except FileNotFoundError as e:
-            ui.addNutritionFailed(e)
+           ui.addNutritionFailed(e)
 
 # if choice =="5":
     #running = False
