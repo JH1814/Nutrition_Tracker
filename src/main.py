@@ -21,8 +21,8 @@ def main():
             except FileNotFoundError as e:
               ui.addNutritionFailed(e)
 
-        if choice == 2:
-            recipe = input("Enter the name of the recipe to use from the Nutrition Entry List: ")
+        elif choice == 2:
+            recipe = ui.getStringInput("Enter the name of the recipe to use from the Nutrition Entry List: ")
             entry = data.getEntryByName(recipe)
 
             try:
@@ -30,14 +30,14 @@ def main():
                 ui.addNutritionSuccessfull()
             except FileNotFoundError as e:
                 ui.addNutritionFailed(e)
-           
-        if choice == 3:
+
+        elif choice == 3:
             entries = data.getAllEntries()
             ui.showEntries(entries)
 
-        if choice == 5:
+        elif choice == 5:
             is_running = False
-            exit()
+            break
 
         else:
             ui.invalidChoice()
