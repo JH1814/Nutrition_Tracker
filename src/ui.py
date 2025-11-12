@@ -5,8 +5,10 @@
 def showMainMenu():
     print("Welcome to the Nutrition Tracker!")
     print("1. Add Nutrition Entry")
-    print("2. View Nutrition Entries")
-    print("3. Exit")
+    print("2. Use Recipe from the Nutrition Entry List")
+    print("3. View Nutrition Entries")
+    print("4. View Statistics")
+    print("5. Exit")
 
 def addNutritionSuccessfull():
     print("Nutrition data added successfully!")
