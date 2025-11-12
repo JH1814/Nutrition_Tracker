@@ -16,6 +16,9 @@ def addNutritionSuccessfull():
 def addNutritionFailed(error):
     print(f"Failed to add nutrition data: {error}")
 
+def invalidChoice():
+    print("Invalid choice. Please try again.")
+
 def getNutritionInput(): 
     pass
 
