@@ -73,10 +73,10 @@ def createStatistics():
 
 #validation functions
 def validateFloat(input):
-    pass
+    return float(input)
 
 def validateStr(input): #Not empty
-    pass
+    return isinstance(input, str) and input.strip() != ""
 
 def validateInt(input): #return int(input) or raise error
-    pass
+    return int(input)
