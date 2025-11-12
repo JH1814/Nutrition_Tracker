@@ -18,9 +18,9 @@ def main():
             calories = input("Add Calories in kcal")
             date = datetime.datetime.now()
 
-            try :
-             data.writeNutritionData((name,  protein, fats, carbs, calories, date))
-             ui.addNutritionSuccessfull()
+            try:
+                data.writeNutritionData((name, protein, fats, carbs, calories, date))
+                ui.addNutritionSuccessfull()
             except FileNotFoundError as e:
               ui.addNutritionFailed(e)
 
@@ -41,6 +41,9 @@ def main():
         if choice == "5":
             is_running = False
             exit()
+
+        else:
+            ui.invalidChoice()
 
 
 
