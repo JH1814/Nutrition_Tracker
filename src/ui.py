@@ -10,47 +10,6 @@ def showMainMenu():
     print("4. View Statistics")
     print("5. Exit")
 
-def addNutritionSuccessfull():
-    print("Nutrition data added successfully!")
-
-def addNutritionFailed(error):
-    print(f"Failed to add nutrition data: {error}")
-
-def invalidChoice():
-    print("Invalid choice. Please try again.")
-
-def getStringInput(message):  #not null string
-    is_valid = False
-    while not is_valid:
-        try: 
-            string = input(message)
-            if not string:
-                raise ValueError("Input cannot be empty.")
-            is_valid = True
-        except ValueError as e:
-            print(f"Invalid input. Please enter a valid string. {e}")
-    return string
-
-def getFloatInput(message):
-    is_valid = False
-    while not is_valid:
-        try: 
-            number = float(input(message))
-            is_valid = True
-        except ValueError as e:
-            print(f"Invalid input. Please enter a valid number. {e}")
-    return number
-
-def getIntInput(message):
-    is_valid = False
-    while not is_valid:
-        try: 
-            integer = int(input(message))
-            is_valid = True
-        except ValueError as e:
-            print(f"Invalid input. Please enter a valid integer. {e}")
-    return integer
-
 def showStatistics():
     pass
 
@@ -95,3 +54,45 @@ def showEntries(entries, max_width=30):
     print(divider)
     for r in rows:
         print(sep.join(r[c].ljust(widths[c]) for c in cols))
+
+def addNutritionSuccessfull():
+    print("Nutrition data added successfully!")
+
+def addNutritionFailed(error):
+    print(f"Failed to add nutrition data: {error}")
+
+def invalidChoice():
+    print("Invalid choice. Please try again.")
+
+def getStringInput(message):  #not null string
+    is_valid = False
+    while not is_valid:
+        try: 
+            string = input(message)
+            if not string:
+                raise ValueError("Input cannot be empty.")
+            is_valid = True
+        except ValueError as e:
+            print(f"Invalid input. Please enter a valid string. {e}")
+    return string
+
+def getFloatInput(message):
+    is_valid = False
+    while not is_valid:
+        try: 
+            number = float(input(message))
+            is_valid = True
+        except ValueError as e:
+            print(f"Invalid input. Please enter a valid number. {e}")
+    return number
+
+def getIntInput(message):
+    is_valid = False
+    while not is_valid:
+        try: 
+            integer = int(input(message))
+            is_valid = True
+        except ValueError as e:
+            print(f"Invalid input. Please enter a valid integer. {e}")
+    return integer
+
