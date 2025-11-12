@@ -19,8 +19,35 @@ def addNutritionFailed(error):
 def invalidChoice():
     print("Invalid choice. Please try again.")
 
-def getNutritionInput(): 
-    pass
+def getStrintInput(message): 
+    is_valid = False
+    while not is_valid:
+        try: 
+            string = input(message)
+            is_valid = True
+        except ValueError as e:
+            print(f"Invalid input. Please enter a valid integer. {e}")
+    return string
+
+def getFloatInput(message):
+    is_valid = False
+    while not is_valid:
+        try: 
+            number = float(input(message))
+            is_valid = True
+        except ValueError as e:
+            print(f"Invalid input. Please enter a valid number. {e}")
+    return number
+
+def getIntInput(message):
+    is_valid = False
+    while not is_valid:
+        try: 
+            integer = int(input(message))
+            is_valid = True
+        except ValueError as e:
+            print(f"Invalid input. Please enter a valid integer. {e}")
+    return integer
 
 def showStatistics():
     pass
