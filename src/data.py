@@ -12,8 +12,7 @@ def getAllEntries():
     with open("./data/data.csv",'r') as file:
         # Use DictReader to treat each row as a dictionary with column headers as keys
         reader = csv.DictReader(file)
-        for i in range(10):
-            row = next(reader)
+        for row in reader:
             entries.append(row)
         
     return entries
@@ -59,6 +58,24 @@ def getEntriesWithinWeek(): #get the entries within last 7 days
                 entries.append(row)
 
     return entries
+
+def createHeader():
+    with open("./data/data.csv", "w") as file:
+        writer = csv.writer(file)
+        writer.writerow(["Name", "Protein", "Fat", "Carbs", "Calories", "DateTime"])
+
+def checkCsvFileExists():
+    exists = False
+    while not exists:
+        try:
+            with open("./data/data.csv", "r") as file:
+                exists = True
+        except FileNotFoundError:
+            createHeader()
+
+     
+
+
 
 #statistics functions
 def createStatistics():
