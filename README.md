@@ -36,3 +36,27 @@ The program validates the inputs, saves them into a file, and allows users to vi
 
 
 
+## Filestructure  
+
+Our project uses the **MVC structure (Model - View - Controller)**.  
+This structure helps to keep the code clean, organized, and easy to maintain.
+
+### Model
+The Model handles all data operations.  
+It reads and writes data from the `data.csv` file and contains the main program logic such as calculations and data validation.
+
+### View
+The View is responsible for displaying information to the user.  
+It shows menus, messages, and outputs in the console.
+
+### Controller
+The Controller manages the connection between the Model and the View.  
+It receives user input, decides what to do, and coordinates actions between data and output.
+
+### main.py
+The `main.py` file is the entry point of the program.  
+It starts the Controller and connects all parts of the application.
+
+### data.csv
+The `data.csv` file stores all saved user data.  
+It is used by the Model for loading and saving information.
