@@ -79,7 +79,7 @@ def addNutritionFailed(error):
 def invalidChoice():
     print("Invalid choice. Please try again.")
 
-def getStringInput(message):  #not null string
+def getStringInput(message):  
     is_valid = False
     while not is_valid:
         try: 
