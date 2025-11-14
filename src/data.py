@@ -17,17 +17,17 @@ def getAllEntries():
         
     return entries
 
-def getEntryByDate(): #get the entries of today
-    entries = []
-    today = datetime.datetime.now().date()
 
+def getEntryByDate(date = datetime.datetime.now().date()): #get the entries of today
+    entries = []
+  
     with open("./data/data.csv",'r') as file:
         # Use DictReader to treat each row as a dictionary with column headers as keys
         reader = csv.DictReader(file)
         for row in reader:
             # Check if the entry is within the last 7 days
             entry_date = datetime.datetime.fromisoformat(row['DateTime']).date()
-            if entry_date == today:
+            if entry_date == date:
                 entries.append(row)
 
     return entries
