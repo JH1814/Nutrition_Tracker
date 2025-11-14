@@ -27,7 +27,8 @@ def showEntries(entries):
     for entry in entries:
         print(f"{entry.get('Name',''):<30} {entry.get('Protein',''):<10} {entry.get('Fat',''):<10} {entry.get('Carbs',''):<10} {entry.get('Calories',''):<10}")
 
-    
+def showEntriesFailed(error):
+    print(f"No entries found: {error}")
 
 def addNutritionSuccessfull():
     print("Nutrition data added successfully!")
