@@ -59,7 +59,7 @@ def main():
                 data.createHeader()
                 ui.addNutritionFailed(e)
             except IndexError as e:
-                ui.addNutritionFailed(e)
+                ui.showEntriesFailed(e)
 
         elif choice == 5:
             is_running = False
