@@ -61,6 +61,25 @@ def main():
             except IndexError as e:
                 ui.showEntriesFailed(e)
 
+        elif choice == 4:
+            ui.showStatisticsMenu()
+            stats_choice = ui.getIntInput("Select statistics type: ")
+            
+            try:
+                if stats_choice == 1:
+                    averages = data.getDailyAverages()
+                    ui.showDailyAverages(averages)
+                elif stats_choice == 2:
+                    averages = data.getWeeklyAverages()
+                    ui.showWeeklyAverages(averages)
+                elif stats_choice == 3:
+                    continue  # Back to main menu
+                else:
+                    ui.invalidChoice()
+            except FileNotFoundError as e:
+                data.createHeader()
+                ui.addNutritionFailed(e)
+
         elif choice == 5:
             is_running = False
             break

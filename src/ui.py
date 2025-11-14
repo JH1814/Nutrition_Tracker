@@ -10,6 +10,46 @@ def showMainMenu():
     print("4. View Statistics")
     print("5. Exit")
 
+def showStatisticsMenu():
+    print("Statistics Menu:")
+    print("1. Daily Statistics")
+    print("2. Weekly Statistics")
+    print("3. Back to Main Menu")
+
+def showDailyAverages(averages):
+    """Display daily average nutrition statistics."""
+    if not averages:
+        print("No entries found for this day.")
+        return
+    
+    print("\n" + "="*60)
+    print(f"DAILY AVERAGE NUTRITION STATISTICS - {averages['Date']}")
+    print("="*60)
+    print(f"Total entries today: {averages['Count']}")
+    print("-"*60)
+    print(f"Average Protein:  {averages['Protein']:.2f} g")
+    print(f"Average Fat:      {averages['Fat']:.2f} g")
+    print(f"Average Carbs:    {averages['Carbs']:.2f} g")
+    print(f"Average Calories: {averages['Calories']:.2f} kcal")
+    print("="*60 + "\n")
+
+def showWeeklyAverages(averages):
+    """Display weekly average nutrition statistics."""
+    if not averages:
+        print("No entries found for this week.")
+        return
+    
+    print("\n" + "="*60)
+    print("WEEKLY AVERAGE NUTRITION STATISTICS")
+    print("="*60)
+    print(f"Total entries this week: {averages['Count']}")
+    print("-"*60)
+    print(f"Average Protein:  {averages['Protein']:.2f} g/day")
+    print(f"Average Fat:      {averages['Fat']:.2f} g/day")
+    print(f"Average Carbs:    {averages['Carbs']:.2f} g/day")
+    print(f"Average Calories: {averages['Calories']:.2f} kcal/day")
+    print("="*60 + "\n")
+
 def showStatistics():
     pass
 

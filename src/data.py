@@ -74,5 +74,75 @@ def checkCsvFileExists():
             createHeader()
 
 #statistics functions
+def getDailyAverages(date=None):
+    """Calculate daily averages for Protein, Fat, Carbs, Calories for a specific date."""
+    if date is None:
+        date = datetime.datetime.now().date()
+    
+    entries = getEntryByDate(date)
+    
+    if not entries:
+        return None
+    
+    # Initialize totals
+    total_protein = 0.0
+    total_fat = 0.0
+    total_carbs = 0.0
+    total_calories = 0.0
+    
+    # Sum all values
+    for entry in entries:
+        try:
+            total_protein += float(entry.get('Protein', 0))
+            total_fat += float(entry.get('Fat', 0))
+            total_carbs += float(entry.get('Carbs', 0))
+            total_calories += float(entry.get('Calories', 0))
+        except ValueError:
+            pass  # Skip malformed entries
+    
+    # Calculate averages
+    count = len(entries)
+    return {
+        'Protein': total_protein,
+        'Fat': total_fat,
+        'Carbs': total_carbs,
+        'Calories': total_calories,
+        'Count': count,
+        'Date': date
+    }
+
+def getWeeklyAverages():
+    """Calculate weekly averages for Protein, Fat, Carbs, Calories."""
+    entries = getEntriesWithinWeek()
+    
+    if not entries:
+        return None
+    
+    # Initialize totals
+    total_protein = 0.0
+    total_fat = 0.0
+    total_carbs = 0.0
+    total_calories = 0.0
+    
+    # Sum all values
+    for entry in entries:
+        try:
+            total_protein += float(entry.get('Protein', 0))
+            total_fat += float(entry.get('Fat', 0))
+            total_carbs += float(entry.get('Carbs', 0))
+            total_calories += float(entry.get('Calories', 0))
+        except ValueError:
+            pass  # Skip malformed entries
+    
+    # Calculate averages
+    count = len(entries)
+    return {
+        'Protein': total_protein / count,
+        'Fat': total_fat / count,
+        'Carbs': total_carbs / count,
+        'Calories': total_calories / count,
+        'Count': count
+    }
+
 def createStatistics():
     pass
