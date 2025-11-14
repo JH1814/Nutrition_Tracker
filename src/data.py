@@ -73,10 +73,6 @@ def checkCsvFileExists():
         except FileNotFoundError:
             createHeader()
 
-     
-
-
-
 #statistics functions
 def createStatistics():
     pass
