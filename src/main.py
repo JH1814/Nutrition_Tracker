@@ -2,7 +2,7 @@ import data
 import ui
 import datetime
 
-def main():
+def main() -> None:
 
     is_running = True
     while is_running:
