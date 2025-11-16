@@ -4,7 +4,7 @@ import os
 import time
 
 def showMainMenu():
-     #clearTerminal()
+    clearTerminal()
     print("Welcome to the Nutrition Tracker!")
     print("1. Add Nutrition Entry")
     print("2. Use Recipe from the Nutrition Entry List")
