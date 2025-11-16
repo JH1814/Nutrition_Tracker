@@ -32,18 +32,6 @@ def getEntryByDate(date = datetime.datetime.now().date()): #get the entries of t
 
     return entries
 
-def getEntryByName(name):
-    entry = []
-    with open("./data/data.csv",'r') as file:
-        # Use DictReader to treat each row as a dictionary with column headers as keys
-        reader = csv.DictReader(file)
-        for row in reader:
-            if row['Name'] == name:
-                entry.append(row)
-                break
-        
-    return entry
-
 def getEntriesWithinWeek(): #get the entries within last 7 days
     entries = []
     one_week_ago = datetime.datetime.now() - datetime.timedelta(days=7)
@@ -58,6 +46,18 @@ def getEntriesWithinWeek(): #get the entries within last 7 days
                 entries.append(row)
 
     return entries
+
+def getEntryByName(name):
+    entry = []
+    with open("./data/data.csv",'r') as file:
+        # Use DictReader to treat each row as a dictionary with column headers as keys
+        reader = csv.DictReader(file)
+        for row in reader:
+            if row['Name'] == name:
+                entry.append(row)
+                break
+        
+    return entry
 
 def createHeader():
     with open("./data/data.csv", "w") as file:
@@ -74,12 +74,10 @@ def checkCsvFileExists():
             createHeader()
 
 #statistics functions
-def getDailyAverages(date=None):
+def getDailyTotals():
     """Calculate daily averages for Protein, Fat, Carbs, Calories for a specific date."""
-    if date is None:
-        date = datetime.datetime.now().date()
     
-    entries = getEntryByDate(date)
+    entries = getEntryByDate()
     
     if not entries:
         return None
@@ -108,7 +106,6 @@ def getDailyAverages(date=None):
         'Carbs': total_carbs,
         'Calories': total_calories,
         'Count': count,
-        'Date': date
     }
 
 def getWeeklyAverages():
