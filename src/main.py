@@ -40,7 +40,7 @@ def main():
 
             except ValueError as e:
                 ui.addNutritionFailed(e)
-                
+
             # Only proceed if entry was found
             if entry:
                 try:
@@ -70,7 +70,7 @@ def main():
             while stats_running:
                 ui.showStatisticsMenu()
                 stats_choice = ui.getIntInput("Select statistics type: ")
-                
+
                 try:
                     if stats_choice == 1:
                         totals = data.getDailyTotals()
