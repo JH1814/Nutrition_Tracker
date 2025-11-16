@@ -19,7 +19,7 @@ def getAllEntries():
 
 def getEntriesByDate(date = datetime.datetime.now().date()): #get the entries of today
     entries = []
-  
+
     with open("./data/data.csv",'r') as file:
         # Use DictReader to treat each row as a dictionary with column headers as keys
         reader = csv.DictReader(file)
@@ -46,17 +46,17 @@ def getEntriesWithinWeek(): #get the entries within last 7 days
 
     return entries
 
-def getEntriesByName(name):
-    entries = []
+def getEntryByName(name):
+    entry = []
     with open("./data/data.csv",'r') as file:
         # Use DictReader to treat each row as a dictionary with column headers as keys
         reader = csv.DictReader(file)
         for row in reader:
             if row['Name'] == name:
-                entries.append(row)
+                entry.append(row)
                 break
 
-    return entries
+    return entry
 
 def createCsvFile():
     with open("./data/data.csv", "w") as file:
