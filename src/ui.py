@@ -32,7 +32,12 @@ def showEntries(entries, message):
     print("-" * 80)
 
     for entry in entries:
-        print(f"{entry.get('Name',''):<30} {entry.get('Protein',''):<10}  {entry.get('Fat',''):<10} {entry.get('Carbs',''):<10} {entry.get('Calories',''):<10}")
+        name = entry.get('Name', '')
+        protein = f"{entry.get('Protein', '')}g"
+        fat = f"{entry.get('Fat', '')}g"
+        carbs = f"{entry.get('Carbs', '')}g"
+        calories = f"{entry.get('Calories', '')} kcal"
+        print(f"{name:<30} {protein:<10} {fat:<10} {carbs:<10} {calories:<10}")
     
     input("\nPress Enter to continue...")
     clearTerminal()
@@ -46,7 +51,6 @@ def addNutritionSuccessfull():
     clearTerminal()
     print("Nutrition data added successfully!")
     time.sleep(1)
-   
 
 def addNutritionFailed(error):
     clearTerminal()
@@ -94,3 +98,10 @@ def getIntInput(message):
 
 def clearTerminal():
     os.system('cls' if os.name == 'nt' else 'clear')
+
+def exitMessage():
+    clearTerminal()
+    print("Exiting the Nutrition Tracker. Goodbye!")
+    time.sleep(1)
+    clearTerminal()
+
