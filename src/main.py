@@ -1,7 +1,6 @@
 import data
 import ui
 import datetime
-import time
 
 def main():
 
