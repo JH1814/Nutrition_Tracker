@@ -20,7 +20,7 @@ def showStatisticsMenu():
     print("3. Back to Main Menu")
 
 def showEntries(entries, message):
-    #clearTerminal()
+    clearTerminal()
     if not entries:
         showEntriesFailed("No entries found.")
         return
@@ -33,6 +33,9 @@ def showEntries(entries, message):
 
     for entry in entries:
         print(f"{entry.get('Name',''):<30} {entry.get('Protein',''):<10}  {entry.get('Fat',''):<10} {entry.get('Carbs',''):<10} {entry.get('Calories',''):<10}")
+    
+    input("\nPress Enter to continue...")
+    clearTerminal()
 
 def showEntriesFailed(error):
     clearTerminal()
