@@ -1,6 +1,7 @@
 # includes functions to display menus
 # includes functions to show nutrition entries
-
+import os
+import time
 
 def showMainMenu():
     print("Welcome to the Nutrition Tracker!")
@@ -11,36 +12,39 @@ def showMainMenu():
     print("5. Exit")
 
 def showStatisticsMenu():
+    clearTerminal()
     print("Statistics Menu:")
     print("1. Daily Statistics")
     print("2. Weekly Statistics")
     print("3. Back to Main Menu")
 
-def showDailyAverages(averages):
+def showDailyTotals(totals):
+    clearTerminal()
     """Display daily average nutrition statistics."""
-    if not averages:
+    if not totals:
         print("No entries found for this day.")
         return
     
     print("\n" + "="*60)
-    print(f"DAILY AVERAGE NUTRITION STATISTICS - {averages['Date']}")
+    print(f"TOTAL DAILY NUTRITION INTAKE")
     print("="*60)
-    print(f"Total entries today: {averages['Count']}")
+    print(f"Total entries today: {totals['Count']}")
     print("-"*60)
-    print(f"Average Protein:  {averages['Protein']:.2f} g")
-    print(f"Average Fat:      {averages['Fat']:.2f} g")
-    print(f"Average Carbs:    {averages['Carbs']:.2f} g")
-    print(f"Average Calories: {averages['Calories']:.2f} kcal")
+    print(f"Average Protein:  {totals['Protein']:.2f} g")
+    print(f"Average Fat:      {totals['Fat']:.2f} g")
+    print(f"Average Carbs:    {totals['Carbs']:.2f} g")
+    print(f"Average Calories: {totals['Calories']:.2f} kcal")
     print("="*60 + "\n")
 
 def showWeeklyAverages(averages):
-    """Display weekly average nutrition statistics."""
+    clearTerminal()
+    """Display weekly average nutrition intake."""
     if not averages:
         print("No entries found for this week.")
         return
     
     print("\n" + "="*60)
-    print("WEEKLY AVERAGE NUTRITION STATISTICS")
+    print("WEEKLY AVERAGE NUTRITION INTAKE")
     print("="*60)
     print(f"Total entries this week: {averages['Count']}")
     print("-"*60)
@@ -50,15 +54,13 @@ def showWeeklyAverages(averages):
     print(f"Average Calories: {averages['Calories']:.2f} kcal/day")
     print("="*60 + "\n")
 
-def showStatistics():
-    pass
-
-def showEntries(entries):
-
+def showEntries(entries, message):
+    clearTerminal()
     if not entries:
         print("No entries found.")
         return
 
+    print(message)
     # create header
     headers = ["Name", "Protein", "Fat", "Carbs", "Calories"]
     print(f"{headers[0]:<30} {headers[1]:<10} {headers[2]:<10} {headers[3]:<10} {headers[4]:<10}")
@@ -68,16 +70,28 @@ def showEntries(entries):
         print(f"{entry.get('Name',''):<30} {entry.get('Protein',''):<10} {entry.get('Fat',''):<10} {entry.get('Carbs',''):<10} {entry.get('Calories',''):<10}")
 
 def showEntriesFailed(error):
+    clearTerminal()
     print(f"No entries found: {error}")
+    time.sleep(1)
+    clearTerminal()
 
 def addNutritionSuccessfull():
+    clearTerminal()
     print("Nutrition data added successfully!")
+    time.sleep(1)
+    clearTerminal()
 
 def addNutritionFailed(error):
+    clearTerminal()
     print(f"Failed to add nutrition data: {error}")
+    time.sleep(1)
+    clearTerminal()
 
 def invalidChoice():
+    clearTerminal()
     print("Invalid choice. Please try again.")
+    time.sleep(1)
+    clearTerminal()
 
 def getStringInput(message):  
     is_valid = False
@@ -111,3 +125,6 @@ def getIntInput(message):
             print(f"Invalid input. Please enter a valid integer. {e}")
     return integer
 
+def clearTerminal():
+
+    os.system('cls' if os.name == 'nt' else 'clear')
