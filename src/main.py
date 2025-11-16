@@ -74,7 +74,6 @@ def main():
                 try:
                     if stats_choice == 1:
                         totals = data.getDailyTotals()
-                        print(totals)
                         if totals:
                             ui.showEntries(totals, "Daily Total Intake")
                         else:
