@@ -17,8 +17,7 @@ def getAllEntries():
         
     return entries
 
-
-def getEntryByDate(date = datetime.datetime.now().date()): #get the entries of today
+def getEntriesByDate(date = datetime.datetime.now().date()): #get the entries of today
     entries = []
   
     with open("./data/data.csv",'r') as file:
@@ -47,19 +46,19 @@ def getEntriesWithinWeek(): #get the entries within last 7 days
 
     return entries
 
-def getEntryByName(name):
-    entry = []
+def getEntriesByName(name):
+    entries = []
     with open("./data/data.csv",'r') as file:
         # Use DictReader to treat each row as a dictionary with column headers as keys
         reader = csv.DictReader(file)
         for row in reader:
             if row['Name'] == name:
-                entry.append(row)
+                entries.append(row)
                 break
-        
-    return entry
 
-def createHeader():
+    return entries
+
+def createCsvFile():
     with open("./data/data.csv", "w") as file:
         writer = csv.writer(file)
         writer.writerow(["Name", "Protein", "Fat", "Carbs", "Calories", "DateTime"])
@@ -71,14 +70,14 @@ def checkCsvFileExists():
             with open("./data/data.csv", "r") as file:
                 exists = True
         except FileNotFoundError:
-            createHeader()
+            createCsvFile()
 
 #statistics functions
 def getDailyTotals():
-    """Calculate daily averages for Protein, Fat, Carbs, Calories for a specific date."""
+    """Calculate daily totals for Protein, Fat, Carbs, Calories for a specific date."""
     
-    entries = getEntryByDate()
-    
+    entries = getEntriesByDate()
+
     if not entries:
         return None
     
@@ -87,7 +86,7 @@ def getDailyTotals():
     total_fat = 0.0
     total_carbs = 0.0
     total_calories = 0.0
-    
+
     # Sum all values
     for entry in entries:
         try:
@@ -98,15 +97,13 @@ def getDailyTotals():
         except ValueError:
             pass  # Skip malformed entries
     
-    # Calculate averages
-    count = len(entries)
-    return {
-        'Protein': total_protein,
-        'Fat': total_fat,
-        'Carbs': total_carbs,
-        'Calories': total_calories,
-        'Count': count,
-    }
+    return [{
+        'Protein': round(total_protein, 2), 
+        'Fat': round(total_fat, 2), 
+        'Carbs': round(total_carbs, 2), 
+        'Calories': round(total_calories, 2)
+        }]
+    
 
 def getWeeklyAverages():
     """Calculate weekly averages for Protein, Fat, Carbs, Calories."""
@@ -133,13 +130,9 @@ def getWeeklyAverages():
     
     # Calculate averages
     count = len(entries)
-    return {
-        'Protein': total_protein / count,
-        'Fat': total_fat / count,
-        'Carbs': total_carbs / count,
-        'Calories': total_calories / count,
-        'Count': count
-    }
-
-def createStatistics():
-    pass
+    return [{
+        'Protein': round(total_protein / count, 2),
+        'Fat': round(total_fat / count, 2),
+        'Carbs': round(total_carbs / count, 2),
+        'Calories': round(total_calories / count, 2)
+    }]
