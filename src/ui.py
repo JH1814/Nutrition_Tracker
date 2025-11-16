@@ -3,7 +3,7 @@
 import os
 import time
 
-def showMainMenu():
+def showMainMenu() -> None:
     clearTerminal()
     print("Welcome to the Nutrition Tracker!")
     print("1. Add Nutrition Entry")
@@ -12,14 +12,14 @@ def showMainMenu():
     print("4. View Statistics")
     print("5. Exit")
 
-def showStatisticsMenu():
+def showStatisticsMenu() -> None:
     clearTerminal()
     print("Statistics Menu:")
     print("1. Daily Statistics")
     print("2. Weekly Statistics")
     print("3. Back to Main Menu")
 
-def showEntries(entries, message):
+def showEntries(entries: list, message: str) -> None:
     clearTerminal()
     if not entries:
         showEntriesFailed("No entries found.")
@@ -42,29 +42,29 @@ def showEntries(entries, message):
     input("\nPress Enter to continue...")
     clearTerminal()
 
-def showEntriesFailed(error):
+def showEntriesFailed(error: str) -> None:
     clearTerminal()
     print(f"No entries found: {error}")
     time.sleep(1)
 
-def addNutritionSuccessfull():
+def addNutritionSuccessfull() -> None:
     clearTerminal()
     print("Nutrition data added successfully!")
     time.sleep(1)
 
-def addNutritionFailed(error):
+def addNutritionFailed(error: str) -> None:
     clearTerminal()
     print(f"Failed to add nutrition data: {error}")
     time.sleep(1)
     clearTerminal()
 
-def invalidChoice():
+def invalidChoice() -> None:
     clearTerminal()
     print("Invalid choice. Please try again.")
     time.sleep(1)
     clearTerminal()
 
-def getStringInput(message):  
+def getStringInput(message: str) -> str:  
     is_valid = False
     while not is_valid:
         try: 
@@ -76,7 +76,7 @@ def getStringInput(message):
             print(f"Invalid input. Please enter a valid string. {e}")
     return string
 
-def getFloatInput(message):
+def getFloatInput(message: str) -> float:
     is_valid = False
     while not is_valid:
         try: 
@@ -86,7 +86,7 @@ def getFloatInput(message):
             print(f"Invalid input. Please enter a valid number. {e}")
     return number
 
-def getIntInput(message):
+def getIntInput(message: str) -> int:
     is_valid = False
     while not is_valid:
         try: 
@@ -96,10 +96,10 @@ def getIntInput(message):
             print(f"Invalid input. Please enter a valid integer. {e}")
     return integer
 
-def clearTerminal():
+def clearTerminal() -> None:
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def exitMessage():
+def exitMessage() -> None:
     clearTerminal()
     print("Exiting the Nutrition Tracker. Goodbye!")
     time.sleep(1)
