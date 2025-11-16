@@ -1,6 +1,7 @@
 import data
 import ui
 import datetime
+import time
 
 def main():
 
@@ -100,6 +101,7 @@ def main():
 
         elif choice == 5:
             is_running = False
+            ui.exitMessage()
             break
 
         else:
