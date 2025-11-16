@@ -4,6 +4,7 @@ import os
 import time
 
 def showMainMenu():
+     #clearTerminal()
     print("Welcome to the Nutrition Tracker!")
     print("1. Add Nutrition Entry")
     print("2. Use Recipe from the Nutrition Entry List")
@@ -18,68 +19,31 @@ def showStatisticsMenu():
     print("2. Weekly Statistics")
     print("3. Back to Main Menu")
 
-def showDailyTotals(totals):
-    clearTerminal()
-    """Display daily average nutrition statistics."""
-    if not totals:
-        print("No entries found for this day.")
-        return
-    
-    print("\n" + "="*60)
-    print(f"TOTAL DAILY NUTRITION INTAKE")
-    print("="*60)
-    print(f"Total entries today: {totals['Count']}")
-    print("-"*60)
-    print(f"Average Protein:  {totals['Protein']:.2f} g")
-    print(f"Average Fat:      {totals['Fat']:.2f} g")
-    print(f"Average Carbs:    {totals['Carbs']:.2f} g")
-    print(f"Average Calories: {totals['Calories']:.2f} kcal")
-    print("="*60 + "\n")
-
-def showWeeklyAverages(averages):
-    clearTerminal()
-    """Display weekly average nutrition intake."""
-    if not averages:
-        print("No entries found for this week.")
-        return
-    
-    print("\n" + "="*60)
-    print("WEEKLY AVERAGE NUTRITION INTAKE")
-    print("="*60)
-    print(f"Total entries this week: {averages['Count']}")
-    print("-"*60)
-    print(f"Average Protein:  {averages['Protein']:.2f} g/day")
-    print(f"Average Fat:      {averages['Fat']:.2f} g/day")
-    print(f"Average Carbs:    {averages['Carbs']:.2f} g/day")
-    print(f"Average Calories: {averages['Calories']:.2f} kcal/day")
-    print("="*60 + "\n")
-
 def showEntries(entries, message):
-    clearTerminal()
+    #clearTerminal()
     if not entries:
-        print("No entries found.")
+        showEntriesFailed("No entries found.")
         return
 
     print(message)
     # create header
-    headers = ["Name", "Protein", "Fat", "Carbs", "Calories"]
+    headers = ["Name", "Protein ", "Fat", "Carbs", "Calories"]
     print(f"{headers[0]:<30} {headers[1]:<10} {headers[2]:<10} {headers[3]:<10} {headers[4]:<10}")
     print("-" * 80)
 
     for entry in entries:
-        print(f"{entry.get('Name',''):<30} {entry.get('Protein',''):<10} {entry.get('Fat',''):<10} {entry.get('Carbs',''):<10} {entry.get('Calories',''):<10}")
+        print(f"{entry.get('Name',''):<30} {entry.get('Protein',''):<10}  {entry.get('Fat',''):<10} {entry.get('Carbs',''):<10} {entry.get('Calories',''):<10}")
 
 def showEntriesFailed(error):
     clearTerminal()
     print(f"No entries found: {error}")
     time.sleep(1)
-    clearTerminal()
 
 def addNutritionSuccessfull():
     clearTerminal()
     print("Nutrition data added successfully!")
     time.sleep(1)
-    clearTerminal()
+   
 
 def addNutritionFailed(error):
     clearTerminal()
@@ -126,5 +90,4 @@ def getIntInput(message):
     return integer
 
 def clearTerminal():
-
     os.system('cls' if os.name == 'nt' else 'clear')
