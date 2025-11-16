@@ -4,13 +4,13 @@ import datetime
 # variable for CSV path
 csv_file_path = "./data/data.csv"
 
-def writeNutritionData(data):
+def writeNutritionData(data: tuple) -> None:
     with open(csv_file_path, "a") as file:
         writer = csv.writer(file)
         writer.writerow(data)
 
 #request data functions
-def getAllEntries():
+def getAllEntries() -> list:
     entries = []
     with open(csv_file_path,'r') as file:
         # Use DictReader to treat each row as a dictionary with column headers as keys
@@ -20,7 +20,7 @@ def getAllEntries():
         
     return entries
 
-def getEntriesByDate(date = datetime.datetime.now().date()): #get the entries of today
+def getEntriesByDate(date: datetime.date = datetime.datetime.now().date()) -> list: #get the entries of today
     entries = []
 
     with open(csv_file_path,'r') as file:
@@ -34,7 +34,7 @@ def getEntriesByDate(date = datetime.datetime.now().date()): #get the entries of
 
     return entries
 
-def getEntriesWithinWeek(): #get the entries within last 7 days
+def getEntriesWithinWeek() -> list: #get the entries within last 7 days
     entries = []
     one_week_ago = datetime.datetime.now() - datetime.timedelta(days=7)
 
@@ -49,7 +49,7 @@ def getEntriesWithinWeek(): #get the entries within last 7 days
 
     return entries
 
-def getEntryByName(name):
+def getEntryByName(name: str) -> list:
     entry = []
     with open(csv_file_path,'r') as file:
         # Use DictReader to treat each row as a dictionary with column headers as keys
@@ -61,12 +61,12 @@ def getEntryByName(name):
 
     return entry
 
-def createCsvFile():
+def createCsvFile() -> None:
     with open(csv_file_path, "w") as file:
         writer = csv.writer(file)
         writer.writerow(["Name", "Protein", "Fat", "Carbs", "Calories", "DateTime"])
 
-def checkCsvFileExists():
+def checkCsvFileExists() -> None:
     exists = False
     while not exists:
         try:
@@ -76,14 +76,14 @@ def checkCsvFileExists():
             createCsvFile()
 
 #statistics functions
-def getDailyTotals():
+def getDailyTotals() -> list:
     """Calculate daily totals for Protein, Fat, Carbs, Calories for a specific date."""
-    
+
     entries = getEntriesByDate()
 
     if not entries:
         return None
-    
+
     # Initialize totals
     total_protein = 0.0
     total_fat = 0.0
@@ -99,28 +99,27 @@ def getDailyTotals():
             total_calories += float(entry.get('Calories', 0))
         except ValueError:
             pass  # Skip malformed entries
-    
+
     return [{
         'Protein': round(total_protein, 2), 
         'Fat': round(total_fat, 2), 
         'Carbs': round(total_carbs, 2), 
         'Calories': round(total_calories, 2)
         }]
-    
 
-def getWeeklyAverages():
+def getWeeklyAverages() -> list:
     """Calculate weekly averages for Protein, Fat, Carbs, Calories."""
     entries = getEntriesWithinWeek()
-    
+
     if not entries:
         return None
-    
+
     # Initialize totals
     total_protein = 0.0
     total_fat = 0.0
     total_carbs = 0.0
     total_calories = 0.0
-    
+
     # Sum all values
     for entry in entries:
         try:
