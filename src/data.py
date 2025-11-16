@@ -34,7 +34,7 @@ def getEntriesByDate(date: datetime.date = datetime.datetime.now().date()) -> li
 
     return entries
 
-def getEntriesWithinWeek() -> list: #get the entries within last 7 days
+def getEntriesWithinWeek() -> list[dict]: #get the entries within last 7 days
     entries = []
     one_week_ago = datetime.datetime.now() - datetime.timedelta(days=7)
 
@@ -49,7 +49,7 @@ def getEntriesWithinWeek() -> list: #get the entries within last 7 days
 
     return entries
 
-def getEntryByName(name: str) -> list:
+def getEntryByName(name: str) -> list[dict]:
     entry = []
     with open(csv_file_path,'r') as file:
         # Use DictReader to treat each row as a dictionary with column headers as keys
@@ -76,7 +76,7 @@ def checkCsvFileExists() -> None:
             createCsvFile()
 
 #statistics functions
-def getDailyTotals() -> list:
+def getDailyTotals() -> list[dict]:
     """Calculate daily totals for Protein, Fat, Carbs, Calories for a specific date."""
 
     entries = getEntriesByDate()
@@ -107,7 +107,7 @@ def getDailyTotals() -> list:
         'Calories': round(total_calories, 2)
         }]
 
-def getWeeklyAverages() -> list:
+def getWeeklyAverages() -> list[dict]:
     """Calculate weekly averages for Protein, Fat, Carbs, Calories."""
     entries = getEntriesWithinWeek()
 
