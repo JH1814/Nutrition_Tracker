@@ -102,6 +102,6 @@ def clearTerminal() -> None:
 def exitMessage() -> None:
     clearTerminal()
     print("Exiting the Nutrition Tracker. Goodbye!")
-    time.sleep(1)
+    time.sleep(2)
     clearTerminal()
 
