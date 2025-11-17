@@ -7,7 +7,7 @@ def showMainMenu() -> None:
     clearTerminal()
     print("Welcome to the Nutrition Tracker!")
     print("1. Add Nutrition Entry")
-    print("2. Use Recipe from the Nutrition Entry List")
+    print("2. Use Existing Nutrition Entry")
     print("3. View Nutrition Entries")
     print("4. View Statistics")
     print("5. Exit")
@@ -15,14 +15,14 @@ def showMainMenu() -> None:
 def showStatisticsMenu() -> None:
     clearTerminal()
     print("Statistics Menu:")
-    print("1. Daily Statistics")
-    print("2. Weekly Statistics")
+    print("1. Daily Totals")
+    print("2. Weekly Averages")
     print("3. Back to Main Menu")
 
 def showEntries(entries: list, message: str) -> None:
     clearTerminal()
     if not entries:
-        showEntriesFailed("No entries found.")
+        showEntriesFailed("No Entries Found.")
         return
 
     print(message)
@@ -44,23 +44,23 @@ def showEntries(entries: list, message: str) -> None:
 
 def showEntriesFailed(error: str) -> None:
     clearTerminal()
-    print(f"No entries found: {error}")
+    print(f"No Entries Found: {error}")
     time.sleep(1)
 
 def addNutritionSuccessfull() -> None:
     clearTerminal()
-    print("Nutrition data added successfully!")
+    print("Nutrition Data Added Successfully!")
     time.sleep(1)
 
 def addNutritionFailed(error: str) -> None:
     clearTerminal()
-    print(f"Failed to add nutrition data: {error}")
+    print(f"Failed to Add Nutrition Data: {error}")
     time.sleep(1)
     clearTerminal()
 
 def invalidChoice() -> None:
     clearTerminal()
-    print("Invalid choice. Please try again.")
+    print("Invalid Choice. Please Try Again.")
     time.sleep(1)
     clearTerminal()
 
@@ -70,10 +70,10 @@ def getStringInput(message: str) -> str:
         try: 
             string = input(message)
             if not string:
-                raise ValueError("Input cannot be empty.")
+                raise ValueError("Input Cannot be Empty.")
             is_valid = True
         except ValueError as e:
-            print(f"Invalid input. Please enter a valid string. {e}")
+            print(f"Invalid Input. Please Enter a Valid String. {e}")
     return string
 
 def getFloatInput(message: str) -> float:
@@ -83,7 +83,7 @@ def getFloatInput(message: str) -> float:
             number = float(input(message))
             is_valid = True
         except ValueError as e:
-            print(f"Invalid input. Please enter a valid number. {e}")
+            print(f"Invalid Input. Please Enter a Valid Number. {e}")
     return number
 
 def getIntInput(message: str) -> int:
@@ -93,7 +93,7 @@ def getIntInput(message: str) -> int:
             integer = int(input(message))
             is_valid = True
         except ValueError as e:
-            print(f"Invalid input. Please enter a valid integer. {e}")
+            print(f"Invalid Input. Please Enter a Valid Integer. {e}")
     return integer
 
 def clearTerminal() -> None:
