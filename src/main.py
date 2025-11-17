@@ -10,7 +10,7 @@ def main() -> None:
         data.checkCsvFileExists()
         ui.showMainMenu()
 
-        choice = ui.getIntInput("Enter your choice: ")
+        choice = ui.getIntInput("Enter your Choice: ")
         if choice == 1:
             ui.clearTerminal()
             name = ui.getStringInput("Add Name of Nutrition Entry: ")
@@ -29,7 +29,7 @@ def main() -> None:
 
         elif choice == 2:
             ui.clearTerminal()
-            recipe = ui.getStringInput("Enter the name of the recipe to use from the Nutrition Entry List: ")
+            recipe = ui.getStringInput("Enter the Name of the Recipe to use from the Nutrition Entries List: ")
             entry = []
             try:
                 entry = data.getEntryByName(recipe)
@@ -51,7 +51,7 @@ def main() -> None:
                     data.createCsvFile()
                     ui.addNutritionFailed(e)
             else:
-                ui.addNutritionFailed("Recipe not found in the nutrition entry list.")
+                ui.addNutritionFailed("Recipe Not Found in the Nutrition Entries List.")
 
         elif choice == 3:
             ui.clearTerminal()
@@ -69,7 +69,7 @@ def main() -> None:
             stats_running = True
             while stats_running:
                 ui.showStatisticsMenu()
-                stats_choice = ui.getIntInput("Select statistics type: ")
+                stats_choice = ui.getIntInput("Select Statistics Type: ")
 
                 try:
                     if stats_choice == 1:
@@ -77,14 +77,14 @@ def main() -> None:
                         if totals:
                             ui.showEntries(totals, "Daily Total Intake")
                         else:
-                            ui.showEntriesFailed("No entries found for today")
+                            ui.showEntriesFailed("No Entries Found for Today")
                         stats_running = False  # Exit stats menu after showing result
                     elif stats_choice == 2:
                         averages = data.getWeeklyAverages()
                         if averages:
                             ui.showEntries(averages, "Weekly Average Intake")
                         else:
-                            ui.showEntriesFailed("No entries found for this week")
+                            ui.showEntriesFailed("No Entries Found for this Week")
                         stats_running = False  # Exit stats menu after showing result
                     elif stats_choice == 3:
                         ui.clearTerminal()
