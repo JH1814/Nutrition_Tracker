@@ -5,13 +5,13 @@ import os
 # variable for CSV path
 csv_file_path = os.path.join(os.path.dirname(__file__), "data", "data.csv")
 
-def writeNutritionData(data: list) -> None:
+def write_nutrition_data(data: list) -> None:
     with open(csv_file_path, "a") as file:
         writer = csv.writer(file)
         writer.writerow(data)
 
 #request data functions
-def getAllEntries() -> list:
+def get_all_entries() -> list:
     entries = []
     # Track whether any corrupted rows are found
     # Corruption criteria: empty Name or invalid/missing DateTime
@@ -28,7 +28,7 @@ def getAllEntries() -> list:
 
     return entries
 
-def scanCsvForCorruption() -> int:
+def scan_csv_for_corruption() -> int:
     """Scan the CSV for corrupted rows and return the count.
 
     A row is considered corrupted if:
@@ -55,7 +55,7 @@ def scanCsvForCorruption() -> int:
                 continue
     return corrupt_count
 
-def getEntriesByDate(date: datetime.date = datetime.datetime.now().date()) -> list: #get the entries of today
+def get_entries_by_date(date: datetime.date = datetime.datetime.now().date()) -> list: #get the entries of today
     entries = []
 
     with open(csv_file_path,'r') as file:
@@ -76,7 +76,7 @@ def getEntriesByDate(date: datetime.date = datetime.datetime.now().date()) -> li
 
     return entries
 
-def getEntriesWithinWeek() -> list[dict]: #get the entries within last 7 days
+def get_entries_within_week() -> list[dict]: #get the entries within last 7 days
     entries = []
     one_week_ago = datetime.datetime.now() - datetime.timedelta(days=7)
 
@@ -98,7 +98,7 @@ def getEntriesWithinWeek() -> list[dict]: #get the entries within last 7 days
 
     return entries
 
-def getEntryByName(name: str) -> list[dict]:
+def get_entry_by_name(name: str) -> list[dict]:
     entry = []
     with open(csv_file_path,'r') as file:
         # Use DictReader to treat each row as a dictionary with column headers as keys
@@ -113,26 +113,26 @@ def getEntryByName(name: str) -> list[dict]:
 
     return entry
 
-def createCsvFile() -> None:
+def create_csv_file() -> None:
     os.makedirs(os.path.dirname(csv_file_path), exist_ok=True)
     with open(csv_file_path, "w") as file:
         writer = csv.writer(file)
         writer.writerow(["Name", "Protein", "Fat", "Carbs", "Calories", "DateTime"])
 
-def checkCsvFileExists() -> None:
+def check_csv_file_exists() -> None:
     exists = False
     while not exists:
         try:
             with open(csv_file_path, "r") as file:
                 exists = True
         except FileNotFoundError:
-            createCsvFile()
+            create_csv_file()
 
 #statistics functions
-def getDailyTotals() -> list[dict]:
+def get_daily_totals() -> list[dict]:
     """Calculate daily totals for Protein, Fat, Carbs, Calories for a specific date."""
 
-    entries = getEntriesByDate()
+    entries = get_entries_by_date()
 
     if not entries:
         return None
@@ -161,9 +161,9 @@ def getDailyTotals() -> list[dict]:
         'Calories': round(total_calories, 2)
         }]
 
-def getWeeklyAverages() -> list[dict]:
+def get_weekly_averages() -> list[dict]:
     """Calculate weekly averages for Protein, Fat, Carbs, Calories."""
-    entries = getEntriesWithinWeek()
+    entries = get_entries_within_week()
 
     if not entries:
         return None
