@@ -5,8 +5,8 @@ import time
 
 MAX_NAME_LENGTH = 30 
 
-def showMainMenu() -> None:
-    clearTerminal()
+def show_main_menu() -> None:
+    clear_terminal()
     print("Welcome to the Nutrition Tracker!")
     print("1. Add Nutrition Entry")
     print("2. Use Existing Nutrition Entry")
@@ -14,17 +14,17 @@ def showMainMenu() -> None:
     print("4. View Statistics")
     print("5. Exit")
 
-def showStatisticsMenu() -> None:
-    clearTerminal()
+def show_statistics_menu() -> None:
+    clear_terminal()
     print("Statistics Menu:")
     print("1. Daily Totals")
     print("2. Weekly Averages")
     print("3. Back to Main Menu")
 
-def showEntries(entries: list, message: str) -> None:
-    clearTerminal()
+def show_entries(entries: list, message: str) -> None:
+    clear_terminal()
     if not entries:
-        showEntriesFailed("No Entries Found.")
+        show_entries_failed("No Entries Found.")
         return
 
     print(message)
@@ -42,9 +42,9 @@ def showEntries(entries: list, message: str) -> None:
         print(f"{name:<30} {protein:<10} {fat:<10} {carbs:<10} {calories:<10}")
     
     input("\nPress Enter to continue...")
-    clearTerminal()
+    clear_terminal()
 
-def showStatsResult(result, title: str, empty_message: str) -> None:
+def show_stats_result(result, title: str, empty_message: str) -> None:
     """Helper to display stats and a single corruption warning.
 
     - If `result` is truthy, shows entries with `title`.
@@ -52,48 +52,48 @@ def showStatsResult(result, title: str, empty_message: str) -> None:
     - Then scans CSV once and warns if corrupted rows were skipped.
     """
     if result:
-        showEntries(result, title)
+        show_entries(result, title)
     else:
-        showEntriesFailed(empty_message)
+        show_entries_failed(empty_message)
 
     try:
         # Local import avoids potential circular-import issues at module load time
         import data  # type: ignore
-        corrupt_count = data.scanCsvForCorruption()
+        corrupt_count = data.scan_csv_for_corruption()
         if corrupt_count > 0:
-            showEntriesFailed(f"Warning: {corrupt_count} corrupted row(s) were skipped.")
+            show_entries_failed(f"Warning: {corrupt_count} corrupted row(s) were skipped.")
     except IOError:
         pass
 
-def showEntriesFailed(error: str) -> None:
-    clearTerminal()
+def show_entries_failed(error: str) -> None:
+    clear_terminal()
     print(f"No Entries Found: {error}")
     time.sleep(2)
 
-def addNutritionSuccessful() -> None:
-    clearTerminal()
+def add_nutrition_successful() -> None:
+    clear_terminal()
     print("Nutrition Data Added Successfully!")
     time.sleep(1)
 
-def addNutritionFailed(error: str) -> None:
-    clearTerminal()
+def add_nutrition_failed(error: str) -> None:
+    clear_terminal()
     print(f"Failed to Add Nutrition Data: {error}")
     time.sleep(1)
-    clearTerminal()
+    clear_terminal()
 
-def invalidChoice() -> None:
-    clearTerminal()
+def invalid_choice() -> None:
+    clear_terminal()
     print("Invalid Choice. Please Try Again.")
     time.sleep(1)
-    clearTerminal()
+    clear_terminal()
 
-def exitMessage() -> None:
-    clearTerminal()
+def exit_message() -> None:
+    clear_terminal()
     print("Exiting the Nutrition Tracker. Goodbye!")
     time.sleep(2)
-    clearTerminal()
+    clear_terminal()
 
-def getStringInput(message: str) -> str:  
+def get_string_input(message: str) -> str:  
     is_valid = False
     while not is_valid:
         try: 
@@ -105,7 +105,7 @@ def getStringInput(message: str) -> str:
             print(f"Invalid Input. Please Enter a Valid String. {e}")
     return string
 
-def getFloatInput(message: str) -> float:
+def get_float_input(message: str) -> float:
     is_valid = False
     while not is_valid:
         try: 
@@ -117,7 +117,7 @@ def getFloatInput(message: str) -> float:
             print(f"Invalid Input. Please Enter a Valid Number. {e}")
     return number
 
-def getIntInput(message: str) -> int:
+def get_int_input(message: str) -> int:
     is_valid = False
     while not is_valid:
         try: 
@@ -129,5 +129,5 @@ def getIntInput(message: str) -> int:
             print(f"Invalid Input. Please Enter a Valid Integer. {e}")
     return integer
 
-def clearTerminal() -> None:
+def clear_terminal() -> None:
     os.system('cls' if os.name == 'nt' else 'clear')
