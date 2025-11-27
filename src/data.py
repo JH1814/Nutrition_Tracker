@@ -4,7 +4,7 @@ import datetime
 # variable for CSV path
 csv_file_path = "./data/data.csv"
 
-def writeNutritionData(data: tuple) -> None:
+def writeNutritionData(data: list) -> None:
     with open(csv_file_path, "a") as file:
         writer = csv.writer(file)
         writer.writerow(data)
@@ -12,13 +12,45 @@ def writeNutritionData(data: tuple) -> None:
 #request data functions
 def getAllEntries() -> list:
     entries = []
+    # Track whether any corrupted rows are found
+    # Corruption criteria: empty Name or invalid/missing DateTime
+    # This function only returns valid entries; use scanCsvForCorruption() to report issues
     with open(csv_file_path,'r') as file:
         # Use DictReader to treat each row as a dictionary with column headers as keys
         reader = csv.DictReader(file)
         for row in reader:
+            # Skip rows with empty name field (corrupted data)
+            if not row.get('Name', '').strip():
+                continue
+            # Append only valid rows; do not raise to keep program running
             entries.append(row)
-        
+
     return entries
+
+def scanCsvForCorruption() -> int:
+    """Scan the CSV for corrupted rows and return the count.
+
+    A row is considered corrupted if:
+    - The 'Name' field is empty or missing
+    - The 'DateTime' field is missing or not a valid ISO datetime
+
+    This function does not modify data; it only reports issues.
+    """
+    corrupt_count = 0
+    with open(csv_file_path,'r') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            # Check for empty/missing name
+            if not row.get('Name', '').strip():
+                corrupt_count += 1
+                continue
+            # Check for invalid DateTime
+            try:
+                _ = datetime.datetime.fromisoformat(row['DateTime'])
+            except Exception:
+                corrupt_count += 1
+                continue
+    return corrupt_count
 
 def getEntriesByDate(date: datetime.date = datetime.datetime.now().date()) -> list: #get the entries of today
     entries = []
@@ -27,10 +59,17 @@ def getEntriesByDate(date: datetime.date = datetime.datetime.now().date()) -> li
         # Use DictReader to treat each row as a dictionary with column headers as keys
         reader = csv.DictReader(file)
         for row in reader:
-            # Check if the entry is within the last 7 days
-            entry_date = datetime.datetime.fromisoformat(row['DateTime']).date()
-            if entry_date == date:
-                entries.append(row)
+            try:
+                # Skip rows with empty name or invalid data
+                if not row.get('Name', '').strip():
+                    continue
+                # Check if the entry is within the last 7 days
+                entry_date = datetime.datetime.fromisoformat(row['DateTime']).date()
+                if entry_date == date:
+                    entries.append(row)
+            except (ValueError, KeyError):
+                # Skip entries with invalid datetime format or missing fields
+                continue
 
     return entries
 
@@ -42,10 +81,17 @@ def getEntriesWithinWeek() -> list[dict]: #get the entries within last 7 days
         # Use DictReader to treat each row as a dictionary with column headers as keys
         reader = csv.DictReader(file)
         for row in reader:
-            # Check if the entry is within the last 7 days
-            entry_date = datetime.datetime.fromisoformat(row['DateTime'])
-            if entry_date >= one_week_ago:
-                entries.append(row)
+            try:
+                # Skip rows with empty name or invalid data
+                if not row.get('Name', '').strip():
+                    continue
+                # Check if the entry is within the last 7 days
+                entry_date = datetime.datetime.fromisoformat(row['DateTime'])
+                if entry_date >= one_week_ago:
+                    entries.append(row)
+            except (ValueError, KeyError):
+                # Skip entries with invalid datetime format or missing fields
+                continue
 
     return entries
 
@@ -55,6 +101,9 @@ def getEntryByName(name: str) -> list[dict]:
         # Use DictReader to treat each row as a dictionary with column headers as keys
         reader = csv.DictReader(file)
         for row in reader:
+            # Skip rows with empty name field
+            if not row.get('Name', '').strip():
+                continue
             if row['Name'] == name:
                 entry.append(row)
                 break
