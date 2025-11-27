@@ -204,9 +204,9 @@ This layout minimizes indirection while keeping responsibilities clear for a sma
                          ▼
 ┌──────────────────────────────────────────────────────────┐
 │ MAIN LOOP (while is_running)                             │
-│  1. data.checkCsvFileExists()                            │
-│  2. ui.showMainMenu()                                    │
-│  3. choice = ui.getIntInput("Enter your Choice:")        │
+│  1. data.check_csv_file_exists()                         │
+│  2. ui.show_main_menu()                                  │
+│  3. choice = ui.get_int_input("Enter your Choice:")      │
 │  4. Route by choice                                      │
 └────────────┬─────────────────────────────────────────────┘
                          │
@@ -214,63 +214,58 @@ This layout minimizes indirection while keeping responsibilities clear for a sma
      │         │                                                                                 │
      │         │ Choice == 1 (Add Entry)                                                         │
      │         │   ┌──────────────────────────────────────────────────────────────────────────┐  │
-     │         │   │ ui.clearTerminal()                                                        │  │
-     │         │   │ name = ui.getStringInput() (≤30 chars)                                    │  │
-     │         │   │ protein = ui.getFloatInput()                                             │  │
-     │         │   │ fat = ui.getFloatInput()                                                 │  │
-     │         │   │ carbs = ui.getFloatInput()                                               │  │
-     │         │   │ calories = ui.getFloatInput()                                            │  │
-     │         │   │ data.checkCsvFileExists()                                                │  │
-     │         │   │ data.writeNutritionData([... dt.now()])                                   │  │
-     │         │   │ ui.addNutritionSuccessfull() | ui.addNutritionFailed(e)                   │  │
+     │         │   │ ui.clear_terminal()                                                       │  │
+     │         │   │ name = ui.get_string_input() (≤30 chars)                                  │  │
+     │         │   │ protein = ui.get_float_input()                                            │  │
+     │         │   │ fat = ui.get_float_input()                                                │  │
+     │         │   │ carbs = ui.get_float_input()                                              │  │
+     │         │   │ calories = ui.get_float_input()                                           │  │
+     │         │   │ data.write_nutrition_data([... dt.now()])                                 │  │
+     │         │   │ ui.add_nutrition_successful() | ui.add_nutrition_failed(e)                │  │
      │         │   └──────────────────────────────────────────────────────────────────────────┘  │
      │         │                                                                                 │
      │         │ Choice == 2 (Reuse Existing Entry)                                              │
      │         │   ┌──────────────────────────────────────────────────────────────────────────┐  │
-     │         │   │ ui.clearTerminal()                                                        │  │
-     │         │   │ recipe = ui.getStringInput()                                              │  │
-     │         │   │ entry = data.getEntryByName(recipe)                                      │  │
-     │         │   │ IF entry found:                                                          │  │
-     │         │   │   data.checkCsvFileExists()                                              │  │
-     │         │   │   data.writeNutritionData(copy + new timestamp)                          │  │
-     │         │   │   ui.addNutritionSuccessfull()                                           │  │
-     │         │   │ ELSE: ui.addNutritionFailed("Recipe Not Found")                         │  │
+     │         │   │ ui.clear_terminal()                                                       │  │
+     │         │   │ recipe = ui.get_string_input()                                            │  │
+     │         │   │ entry = data.get_entry_by_name(recipe)                                    │  │
+     │         │   │ IF entry found:                                                           │  │
+     │         │   │   data.write_nutrition_data(copy + new timestamp)                         │  │
+     │         │   │   ui.add_nutrition_successful()                                           │  │
+     │         │   │ ELSE: ui.add_nutrition_failed("Recipe Not Found")                         │  │
      │         │   └──────────────────────────────────────────────────────────────────────────┘  │
      │         │                                                                                 │
      │         │ Choice == 3 (View Entries)                                                      │
      │         │   ┌──────────────────────────────────────────────────────────────────────────┐  │
-     │         │   │ ui.clearTerminal()                                                        │  │
-     │         │   │ entries = data.getAllEntries()                                            │  │
-     │         │   │ ui.showEntries(entries, "Nutrition Entries:")                           │  │
-     │         │   │ corrupt = data.scanCsvForCorruption() → if >0 ui.showEntriesFailed(warn)  │  │
+     │         │   │ ui.clear_terminal()                                                       │  │
+     │         │   │ entries = data.get_all_entries()                                          │  │
+     │         │   │ ui.show_stats_result(entries, "Nutrition Entries:", "No Entries Found.")  │  │
      │         │   └──────────────────────────────────────────────────────────────────────────┘  │
      │         │                                                                                 │
      │         │ Choice == 4 (Statistics Submenu)                                                │
      │         │   ┌──────────────────────────────────────────────────────────────────────────┐  │
      │         │   │ stats_running = True                                                      │  │
      │         │   │ WHILE stats_running:                                                      │  │
-     │         │   │   ui.showStatisticsMenu()                                                 │  │
-     │         │   │   stats_choice = ui.getIntInput()                                         │  │
+     │         │   │   ui.show_statistics_menu()                                               │  │
+     │         │   │   stats_choice = ui.get_int_input()                                       │  │
      │         │   │   IF 1 (Daily Totals):                                                    │  │
-     │         │   │     totals = data.getDailyTotals()                                        │  │
-     │         │   │     IF totals: ui.showEntries(totals) ELSE ui.showEntriesFailed("None")  │  │
-     │         │   │     data.scanCsvForCorruption() warning if needed                        │  │
+     │         │   │     totals = data.get_daily_totals()                                      │  │
+     │         │   │     ui.show_stats_result(totals, "Daily Total", "No Entries for Today")   │  │
      │         │   │     stats_running = False                                                 │  │
      │         │   │   IF 2 (Weekly Averages):                                                 │  │
-     │         │   │     averages = data.getWeeklyAverages()                                   │  │
-     │         │   │     IF averages: ui.showEntries(averages) ELSE ui.showEntriesFailed("None")│ │
-     │         │   │     data.scanCsvForCorruption() warning if needed                        │  │
+     │         │   │     averages = data.get_weekly_averages()                                 │  │
+     │         │   │     ui.show_stats_result(averages, "Weekly Avg", "No Entries this Week")  │  │
      │         │   │     stats_running = False                                                 │  │
      │         │   │   IF 3 (Back): stats_running = False                                      │  │
      │         │   └──────────────────────────────────────────────────────────────────────────┘  │
      │         │                                                                                 │
      │         │ Choice == 5 (Exit)                                                              │
      │         │   ┌──────────────────────────────────────────────────────────────────────────┐  │
-     │         │   │ ui.exitMessage()                                                          │  │
+     │         │   │ ui.exit_message()                                                         │  │
      │         │   │ is_running = False                                                        │  │
      │         │   └──────────────────────────────────────────────────────────────────────────┘  │
      │         │                                                                                 │
-     │         │ ELSE (Invalid Choice) → ui.invalidChoice()                                      │
+     │         │ ELSE (Invalid Choice) → ui.invalid_choice()                                     │
      └─────────┘                                                                                 │
                          │                                                                                 │
                          ▼                                                                                 │
