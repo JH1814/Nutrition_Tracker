@@ -21,7 +21,7 @@ def main() -> None:
 
             try:
                 data.checkCsvFileExists()
-                data.writeNutritionData((name, protein, fat, carbs, calories, datetime.datetime.now()))
+                data.writeNutritionData([name, protein, fat, carbs, calories, datetime.datetime.now()])
                 ui.addNutritionSuccessfull()
             except FileNotFoundError as e:
                 data.createCsvFile()
@@ -58,6 +58,13 @@ def main() -> None:
             try:
                 entries = data.getAllEntries()
                 ui.showEntries(entries, "Nutrition Entries:")
+                # Warn if any corrupted rows were detected in CSV
+                try:
+                    corrupt_count = data.scanCsvForCorruption()
+                    if corrupt_count > 0:
+                        ui.showEntriesFailed(f"Warning: {corrupt_count} corrupted row(s) were skipped.")
+                except IOError:
+                    pass  # If scanning fails, just skip warning
             except FileNotFoundError as e:
                 data.createCsvFile()
                 ui.showEntriesFailed(e)
@@ -76,8 +83,20 @@ def main() -> None:
                         totals = data.getDailyTotals()
                         if totals:
                             ui.showEntries(totals, "Daily Total Intake")
+                            try:
+                                corrupt_count = data.scanCsvForCorruption()
+                                if corrupt_count > 0:
+                                    ui.showEntriesFailed(f"Warning: {corrupt_count} corrupted row(s) were skipped.")
+                            except IOError:
+                                pass  # If scanning fails, just skip warning
                         else:
                             ui.showEntriesFailed("No Entries Found for Today")
+                            try:
+                                corrupt_count = data.scanCsvForCorruption()
+                                if corrupt_count > 0:
+                                    ui.showEntriesFailed(f"Warning: {corrupt_count} corrupted row(s) were skipped.")
+                            except IOError:
+                                pass  # If scanning fails, just skip warning
                         stats_running = False  # Exit stats menu after showing result
                     elif stats_choice == 2:
                         averages = data.getWeeklyAverages()
@@ -85,6 +104,12 @@ def main() -> None:
                             ui.showEntries(averages, "Weekly Average Intake")
                         else:
                             ui.showEntriesFailed("No Entries Found for this Week")
+                            try:
+                                corrupt_count = data.scanCsvForCorruption()
+                                if corrupt_count > 0:
+                                    ui.showEntriesFailed(f"Warning: {corrupt_count} corrupted row(s) were skipped.")
+                            except IOError:
+                                pass  # If scanning fails, just skip warning
                         stats_running = False  # Exit stats menu after showing result
                     elif stats_choice == 3:
                         ui.clearTerminal()
@@ -95,7 +120,13 @@ def main() -> None:
 
                 except FileNotFoundError as e:
                     data.createCsvFile()
-                    ui.addNutritionFailed(e)
+                    ui.showEntriesFailed(e)
+                    stats_running = False
+                except IOError as e:
+                    ui.showEntriesFailed(e)
+                    stats_running = False
+                except ValueError as e:
+                    ui.showEntriesFailed(e)
                     stats_running = False
 
         elif choice == 5:
