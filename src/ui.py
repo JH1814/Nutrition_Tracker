@@ -69,8 +69,8 @@ def getStringInput(message: str) -> str:
     while not is_valid:
         try: 
             string = input(message)
-            if not string:
-                raise ValueError("Input Cannot be Empty.")
+            if not string or string.isdigit():
+                raise ValueError("Input Cannot be Empty or a Number.")
             is_valid = True
         except ValueError as e:
             print(f"Invalid Input. Please Enter a Valid String. {e}")
