@@ -45,7 +45,7 @@ def showEntries(entries: list, message: str) -> None:
 def showEntriesFailed(error: str) -> None:
     clearTerminal()
     print(f"No Entries Found: {error}")
-    time.sleep(1)
+    time.sleep(3)
 
 def addNutritionSuccessfull() -> None:
     clearTerminal()
