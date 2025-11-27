@@ -50,14 +50,14 @@ The application interacts with the user via the console. Users can:
 - View all entries and see daily totals or weekly averages
 
 Key UI functions in `src/ui.py`:
-- `showMainMenu()`, `showStatisticsMenu()` for navigation
-- `getStringInput()`, `getFloatInput()`, `getIntInput()` for validated input
+- `show_main_menu()`, `show_statistics_menu()` for navigation
+- `get_string_input()`, `get_float_input()`, `get_int_input()` for validated input
 
 ### 2. Data Validation
 All user input is validated to ensure data integrity and a smooth experience. Examples from `src/ui.py`:
 
 ```python
-def getStringInput(message: str) -> str:
+def get_string_input(message: str) -> str:
     is_valid = False
     while not is_valid:
         try:
@@ -71,7 +71,7 @@ def getStringInput(message: str) -> str:
 ```
 
 ```python
-def getFloatInput(message: str) -> float:
+def get_float_input(message: str) -> float:
     is_valid = False
     while not is_valid:
         try:
@@ -83,7 +83,7 @@ def getFloatInput(message: str) -> float:
 ```
 
 ```python
-def getIntInput(message: str) -> int:
+def get_int_input(message: str) -> int:
     is_valid = False
     while not is_valid:
         try:
@@ -115,8 +115,8 @@ Additional safeguards:
 	except ValueError:
 	    pass  # Skip malformed entries
 	```
-- **File system resilience:** Missing CSV files are automatically recreated with proper headers via `createCsvFile()`
-- **Corruption detection:** `data.scanCsvForCorruption()` scans the entire file and reports the count of invalid rows without blocking operations
+- **File system resilience:** Missing CSV files are automatically recreated with proper headers via `create_csv_file()`
+- **Corruption detection:** `data.scan_csv_for_corruption()` scans the entire file and reports the count of invalid rows without blocking operations
 - **Robust statistics display:** `ui.show_stats_result(...)` centralizes display and performs a single corruption scan with consistent messaging
 
 
@@ -173,14 +173,14 @@ Nutrition_Tracker/
 
 
 Recent refactor highlights:
-- Centralized statistics display and corruption warnings via `ui.show_stats_result(...)` to avoid duplicated logic.
+- Centralized statistics display and corruption warnings via `ui.showStatsResult(...)` to avoid duplicated logic.
 - Simplified write path by removing redundant `data.checkCsvFileExists()` calls before writes; existence is handled once and on-demand on errors.
 Potential evolution (future, not implemented yet) could split `data.py` into distinct service and repository modules and introduce a domain data class for structured entries.
 ### Visualization
 ### File / Module Roles 🗂️
 
 Stats display helper:
-- Call `ui.show_stats_result(data.getDailyTotals(), "Daily Total Intake", "No Entries Found for Today")` or with weekly averages to ensure consistent output and a single corruption scan.
+- Call `ui.showStatsResult(data.getDailyTotals(), "Daily Total Intake", "No Entries Found for Today")` or with weekly averages to ensure consistent output and a single corruption scan.
 - `main.py`: Application flow & routing.
 - `ui.py`: Terminal interaction & validation.
 - `data.py`: Persistence + queries + analytics.
@@ -339,17 +339,14 @@ The program will ask you to enter information about your meal.
 
 Example prompt:
 ```
-Food name: 
-Calories: 
-Date (YYYY-MM-DD):
+Food name:
+Protein (g):
+Fat (g):
+Carbs (g):
+Calories (kcal):
 ```
 
-Example input:
-```
-Food name: Pizza
-Calories: 850
-Date: 2025-11-04
-```
+Note: The app automatically records the current timestamp; no date entry is required.
 
 ✅ If all inputs are valid, your entry will be saved successfully.  
 ❌ If you enter invalid data (like empty text or wrong number format), the program will show an error message and ask again.
@@ -363,9 +360,9 @@ This will display all entries currently saved in the system.
 
 Example output:
 ```
-1. Pizza – 850 kcal – 2025-11-04
-2. Salad – 300 kcal – 2025-11-04
-3. Pasta – 700 kcal – 2025-11-05
+Chicken – 180 kcal
+Rice – 200 kcal
+Protein Shake – 250 kcal
 ```
 
 ➡️ Use this option to quickly see what you have eaten and how many calories you recorded.
@@ -437,7 +434,7 @@ Goodbye!
 ### Tips 💡
 
 - Always enter numbers (calories) without extra spaces or letters.  
-- Dates must follow the format `YYYY-MM-DD` (for example: `2025-11-04`).  
+- Timestamps are recorded automatically; you do not enter dates manually.  
 - If the program displays an error, just follow the message and re-enter the correct value.  
 - Use lowercase “yes” / “no” when the program asks for a confirmation (if implemented).  
 - Names are limited to 30 characters; use concise, descriptive titles.  
@@ -456,7 +453,6 @@ Enjoy tracking your meals and managing your daily calories with the **Nutrition 
 From the project root:
 
 ```bash
-python3 -m pip install --upgrade pip
 python3 src/main.py
 ```
 
