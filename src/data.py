@@ -1,22 +1,46 @@
+"""Data persistence and analytics module for Nutrition Tracker.
+
+This module handles all CSV file operations, data validation, retrieval,
+and statistical calculations for nutrition entries.
+"""
 import csv
 import datetime
 import os
 
 # variable for CSV path
-csv_file_path = os.path.join(os.path.dirname(__file__), "data", "data.csv")
+csv_file_path: str = os.path.join(os.path.dirname(__file__), "data", "data.csv")
 
-def write_nutrition_data(data: list) -> None:
-    with open(csv_file_path, "a") as file:
+def write_nutrition_data(data: list[str | float | datetime.datetime]) -> None:
+    """Append a nutrition entry to the CSV file.
+    
+    Args:
+        data: List containing [name, protein, fat, carbs, calories, datetime]
+        
+    Raises:
+        FileNotFoundError: If CSV file doesn't exist (caller should create it)
+    """
+    with open(csv_file_path, "a", newline='') as file:
         writer = csv.writer(file)
         writer.writerow(data)
 
 #request data functions
-def get_all_entries() -> list:
+def get_all_entries() -> list[dict[str, str]]:
+    """Retrieve all valid nutrition entries from the CSV file.
+    
+    Automatically skips rows with empty Name fields (corrupted data).
+    Use scan_csv_for_corruption() to detect and report issues.
+    
+    Returns:
+        List of dictionaries containing valid nutrition entries
+        
+    Raises:
+        FileNotFoundError: If CSV file doesn't exist
+    """
     entries = []
     # Track whether any corrupted rows are found
     # Corruption criteria: empty Name or invalid/missing DateTime
     # This function only returns valid entries; use scanCsvForCorruption() to report issues
-    with open(csv_file_path,'r') as file:
+    with open(csv_file_path, 'r', newline='') as file:
         # Use DictReader to treat each row as a dictionary with column headers as keys
         reader = csv.DictReader(file)
         for row in reader:
@@ -38,7 +62,7 @@ def scan_csv_for_corruption() -> int:
     This function does not modify data; it only reports issues.
     """
     corrupt_count = 0
-    with open(csv_file_path,'r') as file:
+    with open(csv_file_path, 'r', newline='') as file:
         reader = csv.DictReader(file)
         for row in reader:
             # Check for empty/missing name
@@ -55,10 +79,21 @@ def scan_csv_for_corruption() -> int:
                 continue
     return corrupt_count
 
-def get_entries_by_date(date: datetime.date = datetime.datetime.now().date()) -> list: #get the entries of today
+def get_entries_by_date(date: datetime.date = datetime.datetime.now().date()) -> list[dict[str, str]]: #get the entries of today
+    """Retrieve nutrition entries for a specific date.
+    
+    Args:
+        date: Target date (defaults to today)
+        
+    Returns:
+        List of entries matching the specified date
+        
+    Note:
+        Skips entries with invalid datetime or empty Name fields
+    """
     entries = []
 
-    with open(csv_file_path,'r') as file:
+    with open(csv_file_path, 'r', newline='') as file:
         # Use DictReader to treat each row as a dictionary with column headers as keys
         reader = csv.DictReader(file)
         for row in reader:
@@ -80,7 +115,7 @@ def get_entries_within_week() -> list[dict]: #get the entries within last 7 days
     entries = []
     one_week_ago = datetime.datetime.now() - datetime.timedelta(days=7)
 
-    with open(csv_file_path,'r') as file:
+    with open(csv_file_path, 'r', newline='') as file:
         # Use DictReader to treat each row as a dictionary with column headers as keys
         reader = csv.DictReader(file)
         for row in reader:
@@ -98,9 +133,9 @@ def get_entries_within_week() -> list[dict]: #get the entries within last 7 days
 
     return entries
 
-def get_entry_by_name(name: str) -> list[dict]:
+def get_entry_by_name(name: str) -> list[dict[str, str]]:
     entry = []
-    with open(csv_file_path,'r') as file:
+    with open(csv_file_path, 'r', newline='') as file:
         # Use DictReader to treat each row as a dictionary with column headers as keys
         reader = csv.DictReader(file)
         for row in reader:
@@ -115,7 +150,7 @@ def get_entry_by_name(name: str) -> list[dict]:
 
 def create_csv_file() -> None:
     os.makedirs(os.path.dirname(csv_file_path), exist_ok=True)
-    with open(csv_file_path, "w") as file:
+    with open(csv_file_path, "w", newline='') as file:
         writer = csv.writer(file)
         writer.writerow(["Name", "Protein", "Fat", "Carbs", "Calories", "DateTime"])
 
@@ -129,8 +164,17 @@ def check_csv_file_exists() -> None:
             create_csv_file()
 
 #statistics functions
-def get_daily_totals() -> list[dict]:
-    """Calculate daily totals for Protein, Fat, Carbs, Calories for a specific date."""
+def get_daily_totals() -> list[dict[str, str | float]]:
+    """Calculate daily totals for Protein, Fat, Carbs, Calories.
+    
+    Sums all nutrition values for the current day.
+    
+    Returns:
+        Single-item list with totals, or None if no entries found
+        
+    Note:
+        Gracefully handles malformed entries by skipping them
+    """
 
     entries = get_entries_by_date()
 
@@ -161,8 +205,17 @@ def get_daily_totals() -> list[dict]:
         'Calories': round(total_calories, 2)
         }]
 
-def get_weekly_averages() -> list[dict]:
-    """Calculate weekly averages for Protein, Fat, Carbs, Calories."""
+def get_weekly_averages() -> list[dict[str, str | float]]:
+    """Calculate weekly averages for Protein, Fat, Carbs, Calories.
+    
+    Averages all nutrition values from entries within the last 7 days.
+    
+    Returns:
+        Single-item list with averages, or None if no entries found
+        
+    Note:
+        Gracefully handles malformed entries by skipping them
+    """
     entries = get_entries_within_week()
 
     if not entries:
