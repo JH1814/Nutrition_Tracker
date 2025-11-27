@@ -19,7 +19,7 @@ This document describes all validation mechanisms implemented in the Nutrition T
 
 ### 1.1 String Input Validation (`ui.py`) 🔤
 
-**Function:** `getStringInput(message: str) -> str`
+**Function:** `get_string_input(message: str) -> str`
 
 **What is validated:**
 - Input cannot be empty
@@ -29,7 +29,7 @@ This document describes all validation mechanisms implemented in the Nutrition T
 
 **How it works:**
 ```python
-def getStringInput(message: str) -> str:  
+def get_string_input(message: str) -> str:  
     is_valid = False
     while not is_valid:
         try: 
@@ -58,7 +58,7 @@ def getStringInput(message: str) -> str:
 
 ### 1.2 Float Input Validation (`ui.py`) 🔢
 
-**Function:** `getFloatInput(message: str) -> float`
+**Function:** `get_float_input(message: str) -> float`
 
 **What is validated:**
 - Input must be convertible to a floating-point number
@@ -66,7 +66,7 @@ def getStringInput(message: str) -> str:
 
 **How it works:**
 ```python
-def getFloatInput(message: str) -> float:
+def get_float_input(message: str) -> float:
     is_valid = False
     while not is_valid:
         try: 
@@ -88,7 +88,7 @@ def getFloatInput(message: str) -> float:
 
 ### 1.3 Integer Input Validation (`ui.py`) 🔢
 
-**Function:** `getIntInput(message: str) -> int`
+**Function:** `get_int_input(message: str) -> int`
 
 **What is validated:**
 - Input must be convertible to an integer
@@ -96,7 +96,7 @@ def getFloatInput(message: str) -> float:
 
 **How it works:**
 ```python
-def getIntInput(message: str) -> int:
+def get_int_input(message: str) -> int:
     is_valid = False
     while not is_valid:
         try: 
@@ -127,7 +127,7 @@ def getIntInput(message: str) -> int:
 **Implementation across functions:**
 
 ```python
-# In getAllEntries()
+# In get_all_entries()
 if not row.get('Name', '').strip():
     continue  # Skip corrupted row
 ```
@@ -295,7 +295,7 @@ def getAllEntries() -> list:
 
 ### 4.1 CSV File Existence Check
 
-**Function:** `checkCsvFileExists() -> None`
+**Function:** `check_csv_file_exists() -> None`
 
 **What is validated:**
 - CSV file exists at expected path (`./data/data.csv`)
@@ -303,14 +303,14 @@ def getAllEntries() -> list:
 
 **Implementation:**
 ```python
-def checkCsvFileExists() -> None:
+def check_csv_file_exists() -> None:
     exists = False
     while not exists:
         try:
             with open(csv_file_path, "r") as file:
                 exists = True
         except FileNotFoundError:
-            createCsvFile()
+            create_csv_file()
 ```
 
 **Validation logic:**
@@ -325,14 +325,14 @@ def checkCsvFileExists() -> None:
 
 ### 4.2 CSV File Creation
 
-**Function:** `createCsvFile() -> None`
+**Function:** `create_csv_file() -> None`
 
 **What is created:**
 - New CSV file with proper column headers
 
 **Implementation:**
 ```python
-def createCsvFile() -> None:
+def create_csv_file() -> None:
     with open(csv_file_path, "w") as file:
         writer = csv.writer(file)
         writer.writerow(["Name", "Protein", "Fat", "Carbs", "Calories", "DateTime"])
@@ -449,11 +449,11 @@ def getWeeklyAverages() -> list[dict]:
 **Exceptions handled:**
 ```python
 try:
-    data.checkCsvFileExists()
-    data.writeNutritionData([name, protein, fat, carbs, calories, datetime.datetime.now()])
+    data.check_csv_file_exists()
+    data.write_nutrition_data([name, protein, fat, carbs, calories, datetime.datetime.now()])
     ui.addNutritionSuccessfull()
 except FileNotFoundError as e:
-    data.createCsvFile()
+    data.create_csv_file()
     ui.addNutritionFailed(e)
 ```
 
@@ -469,19 +469,19 @@ except FileNotFoundError as e:
 **Exceptions handled:**
 ```python
 try:
-    entry = data.getEntryByName(recipe)
+    entry = data.get_entry_by_name(recipe)
 except FileNotFoundError as e:
-    data.createCsvFile()
+    data.create_csv_file()
     ui.addNutritionFailed(e)
 except ValueError as e:
     ui.addNutritionFailed(e)
 
 if entry:
     try:
-        data.writeNutritionData((entry[0]["Name"], ...))
+        data.write_nutrition_data((entry[0]["Name"], ...))
         ui.addNutritionSuccessfull()
     except FileNotFoundError as e:
-        data.createCsvFile()
+        data.create_csv_file()
         ui.addNutritionFailed(e)
 else:
     ui.addNutritionFailed("Recipe Not Found in the Nutrition Entries List.")
@@ -499,7 +499,7 @@ else:
 **Exceptions handled:**
 ```python
 try:
-    entries = data.getAllEntries()
+    entries = data.get_all_entries()
     ui.showEntries(entries, "Nutrition Entries:")
     # Corruption detection
     try:
@@ -509,7 +509,7 @@ try:
     except IOError:
         pass  # Skip warning if scan fails
 except FileNotFoundError as e:
-    data.createCsvFile()
+    data.create_csv_file()
     ui.showEntriesFailed(e)
 except IndexError as e:
     ui.showEntriesFailed(e)
@@ -537,7 +537,7 @@ try:
             # Corruption warning
     # Similar for weekly averages...
 except FileNotFoundError as e:
-    data.createCsvFile()
+    data.create_csv_file()
     ui.showEntriesFailed(e)
 except IOError as e:
     ui.showEntriesFailed(e)
