@@ -1,4 +1,4 @@
-# Nutrition Tracker - User Manual
+# 📘 Nutrition Tracker - User Manual
 
 **Version 1.0** | **Last Updated:** November 27, 2025
 
@@ -6,7 +6,7 @@ Welcome to the Nutrition Tracker! This manual will guide you through all feature
 
 ---
 
-## Table of Contents
+## Table of Contents 📚
 
 1. [Getting Started](#getting-started)
 2. [Main Menu Overview](#main-menu-overview)
@@ -20,14 +20,14 @@ Welcome to the Nutrition Tracker! This manual will guide you through all feature
 
 ---
 
-## 1. Getting Started
+## 1. Getting Started 🚀
 
-### System Requirements
+### System Requirements 🖥️
 - Python 3.x installed
 - Terminal/Command Prompt access
 - ~10 MB of free disk space
 
-### Starting the Application
+### Starting the Application ▶️
 
 **On Windows:**
 ```bash
@@ -41,7 +41,7 @@ cd path/to/Nutrition_Tracker/src
 python3 main.py
 ```
 
-### First Launch
+### First Launch 🟢
 
 When you start the program for the first time, it will automatically:
 1. Create a `data` folder
@@ -61,16 +61,16 @@ When you start the program for the first time, it will automatically:
 
 ---
 
-## 2. Main Menu Overview
+## 2. Main Menu Overview 🧭
 
-### Navigation
+### Navigation 🧭
 
 The program uses **number-based navigation**:
 - Type the number of your choice
 - Press **Enter** to confirm
 - Invalid choices will show an error and return to the menu
 
-### Menu Structure
+### Menu Structure 🗂️
 
 ```
 Main Menu
@@ -87,12 +87,12 @@ Main Menu
 
 ---
 
-## 3. Adding Nutrition Entries
+## 3. Adding Nutrition Entries ➕
 
-### Purpose
+### Purpose 🎯
 Log a new food item with its nutritional information.
 
-### Step-by-Step Process
+### Step-by-Step Process 🧩
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -131,7 +131,7 @@ Log a new food item with its nutritional information.
 └─────────────────────────────────────────────┘
 ```
 
-### Input Requirements
+### Input Requirements 📝
 
 | Field | Type | Rules | Example |
 |-------|------|-------|---------|
@@ -141,7 +141,7 @@ Log a new food item with its nutritional information.
 | **Carbs** | Number | • Must be numeric<br>• Can have decimals<br>• Use grams | `25` or `25.8` |
 | **Calories** | Number | • Must be numeric<br>• Can have decimals<br>• Use kilocalories | `350` or `350.5` |
 
-### What Happens Behind the Scenes
+### What Happens Behind the Scenes 🔧
 
 ```
 User Input → Validation → Storage → Confirmation
@@ -155,7 +155,7 @@ User Input → Validation → Storage → Confirmation
     └─► Values collected
 ```
 
-### Example Session
+### Example Session 🧪
 
 ```
 Add Name of Nutrition Entry: Greek Yogurt with Berries
@@ -169,7 +169,7 @@ Add Calories in kcal: 220
 [Automatically returns to main menu]
 ```
 
-### Automatic Timestamp
+### Automatic Timestamp ⏱️
 
 The program automatically records:
 - **Date:** When the entry was added
@@ -180,12 +180,12 @@ You don't need to enter this manually!
 
 ---
 
-## 4. Reusing Existing Entries
+## 4. Reusing Existing Entries ♻️
 
-### Purpose
+### Purpose 🎯
 Quickly log a meal you've eaten before without re-entering all the nutrition data.
 
-### When to Use This Feature
+### When to Use This Feature 🕑
 
 ✅ **Perfect for:**
 - Daily breakfast items (e.g., "Oatmeal")
@@ -197,7 +197,7 @@ Quickly log a meal you've eaten before without re-entering all the nutrition dat
 - New foods not yet in your database
 - Modified recipes with different portions
 
-### Process Visualization
+### Process Visualization 🔀
 
 ```
 ┌────────────────────────────────────────┐
@@ -240,7 +240,7 @@ Quickly log a meal you've eaten before without re-entering all the nutrition dat
     "Success!"
 ```
 
-### Step-by-Step Example
+### Step-by-Step Example 🧩
 
 **Scenario:** You had pizza yesterday and want to log it again today.
 
@@ -255,7 +255,7 @@ Enter the Name of the Recipe to use: Pizza
 ✓ Nutrition Data Added Successfully!
 ```
 
-### Important Notes
+### Important Notes ❗
 
 ⚠️ **Name must match exactly:**
 - `"Pizza"` ≠ `"pizza"` ≠ `"Pizza "` (with space)
@@ -271,7 +271,7 @@ Enter the Name of the Recipe to use: Pizza
 - Adds a duplicate with current timestamp
 - Both entries remain in your history
 
-### Comparison: Add vs. Reuse
+### Comparison: Add vs. Reuse ⚖️
 
 | Aspect | Add New (Option 1) | Reuse Existing (Option 2) |
 |--------|-------------------|---------------------------|
@@ -282,12 +282,12 @@ Enter the Name of the Recipe to use: Pizza
 
 ---
 
-## 5. Viewing Your Entries
+## 5. Viewing Your Entries 📋
 
-### Purpose
+### Purpose 🎯
 See all nutrition entries you've logged, with automatic data quality checks.
 
-### Display Format
+### Display Format 🖨️
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────┐
@@ -305,7 +305,7 @@ See all nutrition entries you've logged, with automatic data quality checks.
 Press Enter to continue...
 ```
 
-### Table Columns Explained
+### Table Columns Explained 📊
 
 | Column | Description | Example |
 |--------|-------------|---------|
@@ -317,7 +317,7 @@ Press Enter to continue...
 
 **Note:** The DateTime field is stored but not displayed in the list view.
 
-### Data Quality Warnings
+### Data Quality Warnings ⚠️
 
 If corrupted data is detected, you'll see:
 
@@ -337,7 +337,7 @@ If corrupted data is detected, you'll see:
 - ✗ Corrupted entries are skipped (not shown)
 - ℹ You receive a count of skipped rows
 
-### Empty List
+### Empty List 🗒️
 
 If you haven't added any entries yet:
 
@@ -349,15 +349,15 @@ If you haven't added any entries yet:
 
 ---
 
-## 6. Statistics & Analytics
+## 6. Statistics & Analytics 📊
 
-### Accessing Statistics
+### Accessing Statistics 🧭
 
 ```
 Main Menu → Option 4 → Statistics Menu
 ```
 
-### Statistics Submenu
+### Statistics Submenu 🧮
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -370,11 +370,11 @@ Main Menu → Option 4 → Statistics Menu
 
 ---
 
-### 6.1 Daily Totals (Option 1)
+### 6.1 Daily Totals (Option 1) 📆
 
 **Purpose:** See the sum of all nutrition consumed today.
 
-#### What It Shows
+#### What It Shows 👀
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────┐
@@ -388,7 +388,7 @@ Main Menu → Option 4 → Statistics Menu
 Press Enter to continue...
 ```
 
-#### Calculation Method
+#### Calculation Method 🧮
 
 ```
 Today's Entries (example):
@@ -405,7 +405,7 @@ Today's Entries (example):
                     └──────────────────────────┘
 ```
 
-#### Use Cases
+#### Use Cases 🎯
 
 ✓ **Track daily goals:**
 - "Have I hit my protein target today?"
@@ -415,7 +415,7 @@ Today's Entries (example):
 - "I need 20g more protein today"
 - "I have 400 calories left for dinner"
 
-#### No Data Message
+#### No Data Message 🗒️
 
 If you haven't logged anything today:
 
@@ -427,11 +427,11 @@ If you haven't logged anything today:
 
 ---
 
-### 6.2 Weekly Averages (Option 2)
+### 6.2 Weekly Averages (Option 2) 🗓️
 
 **Purpose:** Understand your average daily intake over the past 7 days.
 
-#### What It Shows
+#### What It Shows 👀
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────┐
@@ -445,7 +445,7 @@ If you haven't logged anything today:
 Press Enter to continue...
 ```
 
-#### Calculation Method
+#### Calculation Method 🧮
 
 ```
 Last 7 Days (example):
@@ -467,7 +467,7 @@ Last 7 Days (example):
 
 **Note:** Average is calculated **per entry**, not per day!
 
-#### Use Cases
+#### Use Cases 🎯
 
 ✓ **Identify trends:**
 - "My average protein is lower than I thought"
@@ -481,7 +481,7 @@ Last 7 Days (example):
 - "I need to add more protein sources"
 - "My carb intake is consistent"
 
-#### Time Window
+#### Time Window 🕰️
 
 The calculation includes entries from:
 - **Start:** 7 days ago from current moment
@@ -493,7 +493,7 @@ The calculation includes entries from:
 
 ---
 
-### 6.3 Statistics Tips
+### 6.3 Statistics Tips 💡
 
 #### Best Practices
 
@@ -512,9 +512,9 @@ The calculation includes entries from:
 
 ---
 
-## 7. Tips & Best Practices
+## 7. Tips & Best Practices 💡
 
-### Data Entry Tips
+### Data Entry Tips 📝
 
 #### ✓ DO:
 
@@ -565,9 +565,9 @@ The calculation includes entries from:
 
 ---
 
-### Workflow Examples
+### Workflow Examples 🧭
 
-#### Morning Routine
+#### Morning Routine 🌅
 
 ```
 1. Eat breakfast
@@ -579,7 +579,7 @@ The calculation includes entries from:
 Total time: 2-3 minutes
 ```
 
-#### Evening Review
+#### Evening Review 🌙
 
 ```
 1. Open Nutrition Tracker
@@ -592,7 +592,7 @@ Total time: 2-3 minutes
 Total time: 1 minute
 ```
 
-#### Weekly Check-in
+#### Weekly Check-in 📅
 
 ```
 Sunday evening:
@@ -607,11 +607,11 @@ Total time: 2-3 minutes
 
 ---
 
-## 8. Troubleshooting
+## 8. Troubleshooting 🛠️
 
-### Common Issues
+### Common Issues 🐞
 
-#### Issue: "Invalid Input" Error
+#### Issue: "Invalid Input" Error ❌
 
 **Symptoms:**
 ```
@@ -626,7 +626,7 @@ Invalid Input. Please Enter a Valid Number.
 
 ---
 
-#### Issue: "Recipe Not Found"
+#### Issue: "Recipe Not Found" 🔍
 
 **Symptoms:**
 ```
@@ -641,7 +641,7 @@ Failed to Add Nutrition Data: Recipe Not Found in the Nutrition Entries List.
 
 ---
 
-#### Issue: Corrupted Data Warning
+#### Issue: Corrupted Data Warning ⚠️
 
 **Symptoms:**
 ```
@@ -677,7 +677,7 @@ Failed to Add Nutrition Data: Recipe Not Found in the Nutrition Entries List.
 
 ---
 
-#### Issue: Program Won't Start
+#### Issue: Program Won't Start 🧩
 
 **Symptoms:**
 ```
@@ -697,7 +697,7 @@ python main.py
 
 ---
 
-#### Issue: File Permission Error
+#### Issue: File Permission Error 🔐
 
 **Symptoms:**
 ```
@@ -711,7 +711,7 @@ PermissionError: [Errno 13] Permission denied: './data/data.csv'
 
 ---
 
-### Getting Help
+### Getting Help 🆘
 
 If you encounter an issue not listed here:
 
@@ -723,9 +723,9 @@ If you encounter an issue not listed here:
 
 ---
 
-## 9. Data Management
+## 9. Data Management 🗃️
 
-### Where Your Data is Stored
+### Where Your Data is Stored 📍
 
 ```
 Nutrition_Tracker/
@@ -741,9 +741,9 @@ Nutrition_Tracker/
 
 ---
 
-### Backing Up Your Data
+### Backing Up Your Data 💾
 
-#### Manual Backup (Recommended weekly)
+#### Manual Backup (Recommended weekly) 🔁
 
 1. Navigate to the `data` folder
 2. Copy `data.csv`
@@ -759,7 +759,7 @@ Backup Strategy:
         └── data_backup_2025-12-04.csv
 ```
 
-#### Automated Backup (Advanced)
+#### Automated Backup (Advanced) 🤖
 
 **Windows (Task Scheduler):**
 ```batch
@@ -773,16 +773,16 @@ cp ~/Nutrition_Tracker/src/data/data.csv ~/Backups/data_$(date +%Y%m%d).csv
 
 ---
 
-### Exporting Data
+### Exporting Data 📤
 
-#### For Excel Analysis
+#### For Excel Analysis 📊
 
 1. Locate `data.csv`
 2. Right-click → Open with → Microsoft Excel
 3. Data will load as a table
 4. Create charts, pivot tables, etc.
 
-#### For Google Sheets
+#### For Google Sheets 🧪
 
 1. Open Google Sheets
 2. File → Import
@@ -791,7 +791,7 @@ cp ~/Nutrition_Tracker/src/data/data.csv ~/Backups/data_$(date +%Y%m%d).csv
 
 ---
 
-### Data Format Reference
+### Data Format Reference 🧾
 
 **CSV Structure:**
 ```csv
@@ -810,7 +810,7 @@ Pizza,30,7.5,200,600,2025-11-27 18:45:30.987654
 
 ---
 
-### Cleaning Up Old Data
+### Cleaning Up Old Data 🧹
 
 If your CSV file gets very large (thousands of entries):
 
@@ -824,9 +824,9 @@ If your CSV file gets very large (thousands of entries):
 
 ---
 
-## 10. Quick Reference Card
+## 10. Quick Reference Card 🧾
 
-### Menu Navigation
+### Menu Navigation 🧭
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  Main Menu                                                   │
@@ -841,7 +841,7 @@ If your CSV file gets very large (thousands of entries):
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### Input Types
+### Input Types 🔤
 
 | Prompt | Type | Example | Invalid |
 |--------|------|---------|---------|
@@ -850,7 +850,7 @@ If your CSV file gets very large (thousands of entries):
 | Calories | Number | `350` or `350.2` | `many`, `350kcal` |
 | Choice | Integer | `1`, `2`, `3` | `1.5`, `one` |
 
-### File Locations
+### File Locations 📍
 ```
 Config:     src/data.py (line 5: csv_file_path)
 Data File:  ./data/data.csv
@@ -859,16 +859,16 @@ Program:    src/main.py
 
 ---
 
-## Support & Feedback
+## Support & Feedback 💬
 
-### Questions?
+### Questions? ❓
 
 If you have questions about using this program:
 1. Re-read the relevant section of this manual
 2. Check the troubleshooting section
 3. Review the CSV file directly to understand data structure
 
-### Found a Bug?
+### Found a Bug? 🐞
 
 If you discover a problem with the program:
 1. Note the exact error message
