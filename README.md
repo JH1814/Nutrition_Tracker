@@ -1,13 +1,24 @@
 # 🍎 Nutrition Tracker
-## Problem
+
+## About This Project
+This project is intended to:
+- Practice the complete process from problem analysis to implementation
+- Apply basic Python programming concepts (console I/O, control flow, functions, modules)
+- Demonstrate console interaction, data validation, and file processing
+- Produce clean, well-structured, and documented code suitable for future teamwork
+- Encourage frequent, incremental commits to track progress
+
+## 📝 Analysis
+
+### Problem
 Many people track their daily nutrition manually using notes or spreadsheets, which often leads to **input errors, missing data**, and **no automatic** daily summaries.
 A console-based tracker can simplify this process by storing entries in a structured format and generating quick overviews.
 
-## Scenario 🧭
+### Scenario 🧭
 A user opens the program daily to record food items they’ve eaten — including date, category (e.g., protein, fat, carbs, sugar), and amount.
 The program validates the inputs, saves them into a file, and allows users to view summaries like total calories or nutrients per day or week.
 
-## User Stories 📘
+### User Stories 📘
 1.	As a user, I want to **add food entries** with date, category, and quantity so I can track my nutrition.
 
 2.	As a user, I want to **get a list of all entries** to have a full overview about what I ate.
@@ -18,7 +29,7 @@ The program validates the inputs, saves them into a file, and allows users to vi
 
 5.	As a user, I want to be notified when I enter **invalid data** (e.g., wrong date or negative amount).
 
-## Use Cases 🔧
+### Use Cases 🔧
 * **Add Entry:** User inputs a new nutrition record.
 * **List Entries:** Display all or filtered records.
 * **Show Statistics:** Calculate and display daily or weekly totals.
@@ -30,6 +41,109 @@ The program validates the inputs, saves them into a file, and allows users to vi
 1.	**Interactive App (console input)**
 2.	**Data validation (input checking)**
 3.	**File processing (read/write)**
+
+### 1. Interactive App (Console Input)
+The application interacts with the user via the console. Users can:
+- Navigate a main menu and a statistics submenu
+- Add nutrition entries (name, protein, fat, carbs, calories)
+- Reuse an existing entry by name
+- View all entries and see daily totals or weekly averages
+
+Key UI functions in `src/ui.py`:
+- `showMainMenu()`, `showStatisticsMenu()` for navigation
+- `getStringInput()`, `getFloatInput()`, `getIntInput()` for validated input
+
+### 2. Data Validation
+All user input is validated to ensure data integrity and a smooth experience. Examples from `src/ui.py`:
+
+```python
+def getStringInput(message: str) -> str:
+    is_valid = False
+    while not is_valid:
+        try:
+            string = input(message)
+            if not string or string.isdigit() or len(string) > 30:
+                raise ValueError("Input Cannot be Empty, a Number, or Longer than 30 Characters.")
+            is_valid = True
+        except ValueError as e:
+            print(f"Invalid Input. Please Enter a Valid String. {e}")
+    return string
+```
+
+```python
+def getFloatInput(message: str) -> float:
+    is_valid = False
+    while not is_valid:
+        try:
+            number = float(input(message))
+            is_valid = True
+        except ValueError as e:
+            print(f"Invalid Input. Please Enter a Valid Number. {e}")
+    return number
+```
+
+```python
+def getIntInput(message: str) -> int:
+    is_valid = False
+    while not is_valid:
+        try:
+            integer = int(input(message))
+            is_valid = True
+        except ValueError as e:
+            print(f"Invalid Input. Please Enter a Valid Integer. {e}")
+    return integer
+```
+
+Additional safeguards:
+- **Name field length:** Limited to 30 characters (documented and enforced in `getStringInput`)
+- **CSV data integrity:** All data retrieval functions skip rows with empty/missing `Name` fields using:
+	```python
+	if not row.get('Name', '').strip():
+	    continue  # Skip corrupted row
+	```
+- **DateTime validation:** Entry timestamps are validated during reads; malformed dates are silently skipped:
+	```python
+	try:
+	    entry_date = datetime.datetime.fromisoformat(row['DateTime'])
+	except (ValueError, KeyError):
+	    continue  # Skip invalid/missing datetime
+	```
+- **Numeric field validation:** Statistics calculations gracefully handle non-numeric values:
+	```python
+	try:
+	    total_protein += float(entry.get('Protein', 0))
+	except ValueError:
+	    pass  # Skip malformed entries
+	```
+- **File system resilience:** Missing CSV files are automatically recreated with proper headers via `createCsvFile()`
+- **Corruption detection:** `data.scanCsvForCorruption()` scans the entire file and reports the count of invalid rows without blocking operations
+- **Robust statistics display:** `ui.show_stats_result(...)` centralizes display and performs a single corruption scan with consistent messaging
+
+
+### 3. File Processing
+The application persists data in a CSV file (`src/data/data.csv`). The `src/data.py` module handles:
+- File existence checks and automatic creation on demand
+- Appending new entries with timestamps
+- Reading entries safely, skipping corrupted rows
+- Scanning the CSV for corruption and reporting counts
+
+Illustrative patterns:
+```python
+# Append a row to CSV
+with open(csv_file_path, 'a', newline='') as f:
+    writer = csv.writer(f)
+    writer.writerow([name, protein, fat, carbs, calories, datetime.datetime.now()])
+```
+
+```python
+# Read all valid entries
+with open(csv_file_path, 'r', newline='') as f:
+    reader = csv.DictReader(f)
+    for row in reader:
+        if not row.get('Name', '').strip():
+            continue  # skip corrupted
+        entries.append(row)
+```
 
 ## Filestructure 📂
 
@@ -57,9 +171,16 @@ Nutrition_Tracker/
 - `data.py` (Data & Analytics): Handles file existence, CSV read/write, entry queries, daily/weekly computations, corruption scanning.
 - `src/data/data.csv` (Storage): Flat append-only store of nutrition records.
 
-Potential evolution (future, not implemented yet) could split `data.py` into distinct service and repository modules and introduce a domain data class for structured entries.
 
+Recent refactor highlights:
+- Centralized statistics display and corruption warnings via `ui.show_stats_result(...)` to avoid duplicated logic.
+- Simplified write path by removing redundant `data.checkCsvFileExists()` calls before writes; existence is handled once and on-demand on errors.
+Potential evolution (future, not implemented yet) could split `data.py` into distinct service and repository modules and introduce a domain data class for structured entries.
+### Visualization
 ### File / Module Roles 🗂️
+
+Stats display helper:
+- Call `ui.show_stats_result(data.getDailyTotals(), "Daily Total Intake", "No Entries Found for Today")` or with weekly averages to ensure consistent output and a single corruption scan.
 - `main.py`: Application flow & routing.
 - `ui.py`: Terminal interaction & validation.
 - `data.py`: Persistence + queries + analytics.
@@ -324,3 +445,32 @@ Goodbye!
 ---
 
 Enjoy tracking your meals and managing your daily calories with the **Nutrition Tracker**! 🍎
+
+## ⚙️ Implementation
+
+### Technology
+- Python 3.x
+- No external libraries; uses Python standard library only
+
+### How to Run
+From the project root:
+
+```bash
+python3 -m pip install --upgrade pip
+python3 src/main.py
+```
+
+### Libraries Used
+- `os`, `time` (UI/terminal control and pauses)
+- `csv`, `datetime` (file I/O and timestamps in data layer)
+
+## 👥 Team & Contributions
+
+| Name        | Contribution                                    |
+|-------------|-------------------------------------------------|
+| Raji        | Feature X / Y, documentation Z                  |
+| Paulo       | Data functions, testing, refactor               |
+| Jonas       | Data functions, testing, refactor               |
+
+## 📝 License
+This project is a graded group work for the programming foundation module.
