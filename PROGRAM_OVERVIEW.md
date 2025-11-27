@@ -134,11 +134,12 @@ def main() -> None:
 ```python
 import csv
 import datetime
+import os
 ```
 
 **Configuration:**
 ```python
-csv_file_path = "./data/data.csv"
+csv_file_path = os.path.join(os.path.dirname(__file__), "data", "data.csv")
 ```
 
 **Function Categories:**
@@ -182,7 +183,7 @@ import time
 - `showEntriesFailed(error)` - Shows error message
 
 #### Success/Failure Messages
-- `addNutritionSuccessfull()` - Success confirmation
+- `addNutritionSuccessful()` - Success confirmation
 - `addNutritionFailed(error)` - Failure notification
 - `invalidChoice()` - Invalid input warning
 - `exitMessage()` - Goodbye message
@@ -414,20 +415,10 @@ ui.clearTerminal()
 try:
     # STEP 1: Retrieve all valid entries
     entries = data.getAllEntries()
-    
-    # STEP 2: Display in formatted table
-    ui.showEntries(entries, "Nutrition Entries:")
-    
-    # STEP 3: Check for corruption and warn
-    try:
-        corrupt_count = data.scanCsvForCorruption()
-        if corrupt_count > 0:
-            ui.showEntriesFailed(
-                f"Warning: {corrupt_count} corrupted row(s) were skipped."
-            )
-    except IOError:
-        pass  # Skip warning if scan fails
-        
+
+    # STEP 2: Centralized display + single corruption warning
+    ui.showStatsResult(entries, "Nutrition Entries:", "No Entries Found.")
+
 except FileNotFoundError as e:
     data.createCsvFile()
     ui.showEntriesFailed(e)
