@@ -1,11 +1,18 @@
-# includes functions to display menus
-# includes functions to show nutrition entries
+"""User interface module for the Nutrition Tracker application.
+
+Provides terminal-based menus, input validation, and display functions
+for interacting with nutrition data.
+"""
 import os
 import time
+from typing import Optional
 
-MAX_NAME_LENGTH = 30 
+# Validation constants
+MAX_NAME_LENGTH: int = 30
+MAX_NUMERIC_VALUE: float = 10000.0  # Reasonable upper limit for nutrition values 
 
 def show_main_menu() -> None:
+    """Display the main menu with all available options."""
     clear_terminal()
     print("Welcome to the Nutrition Tracker!")
     print("1. Add Nutrition Entry")
@@ -21,7 +28,13 @@ def show_statistics_menu() -> None:
     print("2. Weekly Averages")
     print("3. Back to Main Menu")
 
-def show_entries(entries: list, message: str) -> None:
+def show_entries(entries: list[dict[str, str | float]], message: str) -> None:
+    """Display nutrition entries in a formatted table.
+    
+    Args:
+        entries: List of nutrition entry dictionaries
+        message: Header message to display above the table
+    """
     clear_terminal()
     if not entries:
         show_entries_failed("No Entries Found.")
@@ -44,7 +57,7 @@ def show_entries(entries: list, message: str) -> None:
     input("\nPress Enter to continue...")
     clear_terminal()
 
-def show_stats_result(result, title: str, empty_message: str) -> None:
+def show_stats_result(result: Optional[list[dict[str, str | float]]], title: str, empty_message: str) -> None:
     """Helper to display stats and a single corruption warning.
 
     - If `result` is truthy, shows entries with `title`.
@@ -93,7 +106,18 @@ def exit_message() -> None:
     time.sleep(2)
     clear_terminal()
 
-def get_string_input(message: str) -> str:  
+def get_string_input(message: str) -> str:
+    """Get validated string input from user.
+    
+    Args:
+        message: Prompt message to display
+        
+    Returns:
+        Valid non-empty string (≤30 chars, not a number)
+        
+    Note:
+        Loops until valid input is provided
+    """  
     is_valid = False
     while not is_valid:
         try: 
@@ -106,24 +130,50 @@ def get_string_input(message: str) -> str:
     return string
 
 def get_float_input(message: str) -> float:
+    """Get validated float input from user.
+    
+    Args:
+        message: Prompt message to display
+        
+    Returns:
+        Valid non-negative float value (0 to 10000)
+        
+    Note:
+        Loops until valid input is provided
+    """
     is_valid = False
     while not is_valid:
         try: 
             number = float(input(message))
             if number < 0:
                 raise ValueError("Input Cannot be Negative.")
+            if number > MAX_NUMERIC_VALUE:
+                raise ValueError(f"Input Cannot Exceed {MAX_NUMERIC_VALUE}.")
             is_valid = True
         except ValueError as e:
             print(f"Invalid Input. Please Enter a Valid Number. {e}")
     return number
 
 def get_int_input(message: str) -> int:
+    """Get validated integer input from user.
+    
+    Args:
+        message: Prompt message to display
+        
+    Returns:
+        Valid non-negative integer value (0 to 10000)
+        
+    Note:
+        Loops until valid input is provided
+    """
     is_valid = False
     while not is_valid:
         try: 
             integer = int(input(message))
             if integer < 0:
                 raise ValueError("Input Cannot be Negative.")
+            if integer > MAX_NUMERIC_VALUE:
+                raise ValueError(f"Input Cannot Exceed {int(MAX_NUMERIC_VALUE)}.")
             is_valid = True
         except ValueError as e:
             print(f"Invalid Input. Please Enter a Valid Integer. {e}")
