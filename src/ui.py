@@ -42,6 +42,27 @@ def showEntries(entries: list, message: str) -> None:
     input("\nPress Enter to continue...")
     clearTerminal()
 
+def show_stats_result(result, title: str, empty_message: str) -> None:
+    """Helper to display stats and a single corruption warning.
+
+    - If `result` is truthy, shows entries with `title`.
+    - Otherwise, shows `empty_message`.
+    - Then scans CSV once and warns if corrupted rows were skipped.
+    """
+    if result:
+        showEntries(result, title)
+    else:
+        showEntriesFailed(empty_message)
+
+    try:
+        # Local import avoids potential circular-import issues at module load time
+        import data  # type: ignore
+        corrupt_count = data.scanCsvForCorruption()
+        if corrupt_count > 0:
+            showEntriesFailed(f"Warning: {corrupt_count} corrupted row(s) were skipped.")
+    except IOError:
+        pass
+
 def showEntriesFailed(error: str) -> None:
     clearTerminal()
     print(f"No Entries Found: {error}")
@@ -62,6 +83,12 @@ def invalidChoice() -> None:
     clearTerminal()
     print("Invalid Choice. Please Try Again.")
     time.sleep(1)
+    clearTerminal()
+
+def exitMessage() -> None:
+    clearTerminal()
+    print("Exiting the Nutrition Tracker. Goodbye!")
+    time.sleep(2)
     clearTerminal()
 
 def getStringInput(message: str) -> str:  
@@ -98,10 +125,3 @@ def getIntInput(message: str) -> int:
 
 def clearTerminal() -> None:
     os.system('cls' if os.name == 'nt' else 'clear')
-
-def exitMessage() -> None:
-    clearTerminal()
-    print("Exiting the Nutrition Tracker. Goodbye!")
-    time.sleep(2)
-    clearTerminal()
-
