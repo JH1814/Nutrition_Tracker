@@ -20,10 +20,10 @@ This document describes how the Nutrition Tracker application reads, writes, and
 
 ### File Processing Architecture 🧱
 
-The Nutrition Tracker uses **CSV (Comma-Separated Values)** format for data persistence. All nutrition entries are stored in a single file located at:
+The Nutrition Tracker uses **CSV (Comma-Separated Values)** format for data persistence. The CSV path is resolved relative to the `data.py` module for stability:
 
 ```
-./data/data.csv
+csv_file_path = os.path.join(os.path.dirname(__file__), "data", "data.csv")
 ```
 
 **Key Design Decisions:**
@@ -84,21 +84,22 @@ csv_file_path = "./data/data.csv"
 ```
 
 **Path Details:**
-- **Relative path:** Assumes execution from project root
-- **Directory:** `./data/` (must exist or be created)
+- **Module-relative path:** Stable regardless of current working directory
+- **Directory:** `./src/data/` (auto-created if missing)
 - **Filename:** `data.csv`
 
 ---
 
 ### 3.2 File Creation ➕
 
-**Function:** `createCsvFile() -> None`
+**Function:** `create_csv_file() -> None`
 
 **Purpose:** Creates a new CSV file with proper column headers
 
 **Implementation:**
 ```python
-def createCsvFile() -> None:
+def create_csv_file() -> None:
+    os.makedirs(os.path.dirname(csv_file_path), exist_ok=True)
     with open(csv_file_path, "w") as file:
         writer = csv.writer(file)
         writer.writerow(["Name", "Protein", "Fat", "Carbs", "Calories", "DateTime"])
@@ -113,29 +114,29 @@ def createCsvFile() -> None:
 4. File is automatically closed when exiting the `with` block
 
 **When called:**
-- Automatically by `checkCsvFileExists()` if file is missing
+- Automatically by `check_csv_file_exists()` if file is missing
 - During error recovery in main application
 
-**Important:** This function **destroys** existing data if the file already exists. It should only be called when file is confirmed missing.
+**Important:** This function overwrites existing data if the file already exists. In normal flow it is only called when the file is confirmed missing.
 
 ---
 
 ### 3.3 File Existence Check ✅
 
-**Function:** `checkCsvFileExists() -> None`
+**Function:** `check_csv_file_exists() -> None`
 
 **Purpose:** Ensures CSV file exists before any read/write operation
 
 **Implementation:**
 ```python
-def checkCsvFileExists() -> None:
+def check_csv_file_exists() -> None:
     exists = False
     while not exists:
         try:
             with open(csv_file_path, "r") as file:
                 exists = True
         except FileNotFoundError:
-            createCsvFile()
+            create_csv_file()
 ```
 
 **How it works:**
@@ -145,7 +146,7 @@ def checkCsvFileExists() -> None:
    - Exits loop
    - File handle automatically closed
 3. If `FileNotFoundError` is raised:
-   - Calls `createCsvFile()` to create file with headers
+   - Calls `create_csv_file()` to create file with headers
    - Loops again to verify creation succeeded
 
 **Safety mechanism:**
@@ -164,13 +165,13 @@ def checkCsvFileExists() -> None:
 
 ### 4.1 Append Operation ➕
 
-**Function:** `writeNutritionData(data: list) -> None`
+**Function:** `write_nutrition_data(data: list) -> None`
 
 **Purpose:** Appends a new nutrition entry to the CSV file
 
 **Implementation:**
 ```python
-def writeNutritionData(data: list) -> None:
+def write_nutrition_data(data: list) -> None:
     with open(csv_file_path, "a") as file:
         writer = csv.writer(file)
         writer.writerow(data)
@@ -180,7 +181,7 @@ def writeNutritionData(data: list) -> None:
 1. Opens file in **append mode** (`"a"`)
    - Positions file pointer at end
    - Preserves existing data
-   - Creates file if missing (though should exist via `checkCsvFileExists()`)
+   - Creates file if missing (though should exist via `check_csv_file_exists()`)
 2. Creates a `csv.writer` object
 3. Writes `data` as a single row
 4. Automatically closes file on exit
@@ -199,19 +200,19 @@ data = ["Pizza", 30, 7.5, 200, 600, datetime.datetime.now()]
 **From `main.py`:**
 ```python
 # User inputs values through UI
-name = ui.getStringInput("Add Name of Nutrition Entry: ")
-protein = ui.getFloatInput("Add Protein in grams: ")
-fat = ui.getFloatInput("Add Fat in grams: ")
-carbs = ui.getFloatInput("Add Carbs in grams: ")
-calories = ui.getFloatInput("Add Calories in kcal: ")
+name = ui.get_string_input("Add Name of Nutrition Entry: ")
+protein = ui.get_float_input("Add Protein in grams: ")
+fat = ui.get_float_input("Add Fat in grams: ")
+carbs = ui.get_float_input("Add Carbs in grams: ")
+calories = ui.get_float_input("Add Calories in kcal: ")
 
 try:
-    data.checkCsvFileExists()  # Ensure file exists
+    data.check_csv_file_exists()  # Ensure file exists
     # Write with current timestamp
-    data.writeNutritionData([name, protein, fat, carbs, calories, datetime.datetime.now()])
+    data.write_nutrition_data([name, protein, fat, carbs, calories, datetime.datetime.now()])
     ui.addNutritionSuccessfull()
 except FileNotFoundError as e:
-    data.createCsvFile()
+    data.create_csv_file()
     ui.addNutritionFailed(e)
 ```
 
@@ -228,13 +229,13 @@ except FileNotFoundError as e:
 
 **From `main.py`:**
 ```python
-recipe = ui.getStringInput("Enter the Name of the Recipe to use: ")
-entry = data.getEntryByName(recipe)
+recipe = ui.get_string_input("Enter the Name of the Recipe to use: ")
+entry = data.get_entry_by_name(recipe)
 
 if entry:
     try:
         # Write existing entry with NEW timestamp
-        data.writeNutritionData((
+        data.write_nutrition_data((
             entry[0]["Name"], 
             entry[0]["Protein"], 
             entry[0]["Fat"], 
@@ -244,7 +245,7 @@ if entry:
         ))
         ui.addNutritionSuccessfull()
     except FileNotFoundError as e:
-        data.createCsvFile()
+        data.create_csv_file()
         ui.addNutritionFailed(e)
 ```
 
@@ -310,13 +311,13 @@ row = {
 
 ### 5.3 Get All Entries 📋
 
-**Function:** `getAllEntries() -> list`
+**Function:** `get_all_entries() -> list`
 
 **Purpose:** Retrieve all valid entries from CSV (skips corrupted rows)
 
 **Implementation:**
 ```python
-def getAllEntries() -> list:
+def get_all_entries() -> list:
     entries = []
     with open(csv_file_path,'r') as file:
         reader = csv.DictReader(file)
@@ -624,11 +625,11 @@ for row in reader:
 **File Operations:**
 
 | Operation | Opens File | Reads All Rows | Time Complexity |
-|-----------|-----------|----------------|-----------------|
-| `createCsvFile()` | 1 write | No | O(1) |
-| `checkCsvFileExists()` | 1 read | No | O(1) |
-| `writeNutritionData()` | 1 append | No | O(1) |
-| `getAllEntries()` | 1 read | Yes | O(n) |
+|-----------|-----------|----------------|------------------|
+| `create_csv_file()` | 1 write | No | O(1) |
+| `check_csv_file_exists()` | 1 read | No | O(1) |
+| `write_nutrition_data()` | 1 append | No | O(1) |
+| `get_all_entries()` | 1 read | Yes | O(n) |
 | `getEntriesByDate()` | 1 read | Yes | O(n) |
 | `getEntriesWithinWeek()` | 1 read | Yes | O(n) |
 | `getEntryByName()` | 1 read | Partial (breaks on match) | O(n) worst case, O(1) best case |
@@ -643,7 +644,7 @@ Where n = number of rows in CSV
 **Example: View entries (Option 3 in main menu)**
 
 ```python
-entries = data.getAllEntries()  # File opened & read
+entries = data.get_all_entries()  # File opened & read
 corrupt_count = data.scanCsvForCorruption()  # File opened & read again
 ```
 
@@ -656,7 +657,7 @@ corrupt_count = data.scanCsvForCorruption()  # File opened & read again
 **In-Memory Storage:**
 
 ```python
-entries = getAllEntries()  # Loads ALL rows into memory
+entries = get_all_entries()  # Loads ALL rows into memory
 ```
 
 - Entire result set stored in memory as list of dictionaries
@@ -715,9 +716,9 @@ entries = getAllEntries()  # Loads ALL rows into memory
 │                    Program Start                         │
 └────────────────────┬────────────────────────────────────┘
                      │
-                     ▼
-         ┌───────────────────────┐
-         │ checkCsvFileExists()  │
+                     │
+         ┌───────────┴───────────┐
+         │ check_csv_file_exists()  │
          │  - Try open 'r' mode  │
          │  - If missing: create │
          └───────────┬───────────┘
