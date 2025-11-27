@@ -3,6 +3,8 @@
 import os
 import time
 
+MAX_NAME_LENGTH = 30 
+
 def showMainMenu() -> None:
     clearTerminal()
     print("Welcome to the Nutrition Tracker!")
@@ -42,7 +44,7 @@ def showEntries(entries: list, message: str) -> None:
     input("\nPress Enter to continue...")
     clearTerminal()
 
-def show_stats_result(result, title: str, empty_message: str) -> None:
+def showStatsResult(result, title: str, empty_message: str) -> None:
     """Helper to display stats and a single corruption warning.
 
     - If `result` is truthy, shows entries with `title`.
@@ -68,7 +70,7 @@ def showEntriesFailed(error: str) -> None:
     print(f"No Entries Found: {error}")
     time.sleep(2)
 
-def addNutritionSuccessfull() -> None:
+def addNutritionSuccessful() -> None:
     clearTerminal()
     print("Nutrition Data Added Successfully!")
     time.sleep(1)
@@ -96,8 +98,8 @@ def getStringInput(message: str) -> str:
     while not is_valid:
         try: 
             string = input(message)
-            if not string or string.isdigit() or len(string) > 30:
-                raise ValueError("Input Cannot be Empty, a Number, or Longer than 30 Characters.")
+            if not string or string.isdigit() or len(string) > MAX_NAME_LENGTH:
+                raise ValueError(f"Input Cannot be Empty, a Number, or Longer than {MAX_NAME_LENGTH} Characters.")
             is_valid = True
         except ValueError as e:
             print(f"Invalid Input. Please Enter a Valid String. {e}")
@@ -108,6 +110,8 @@ def getFloatInput(message: str) -> float:
     while not is_valid:
         try: 
             number = float(input(message))
+            if number < 0:
+                raise ValueError("Input Cannot be Negative.")
             is_valid = True
         except ValueError as e:
             print(f"Invalid Input. Please Enter a Valid Number. {e}")
@@ -118,6 +122,8 @@ def getIntInput(message: str) -> int:
     while not is_valid:
         try: 
             integer = int(input(message))
+            if integer < 0:
+                raise ValueError("Input Cannot be Negative.")
             is_valid = True
         except ValueError as e:
             print(f"Invalid Input. Please Enter a Valid Integer. {e}")
