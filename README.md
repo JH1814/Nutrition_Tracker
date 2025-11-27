@@ -64,6 +64,25 @@ It is used by the Model for loading and saving information.
 
 
 
+### Flowchart
+
+
+
+
+
+
+<img width="1597" height="2262" alt="Readme_Flowchart_Programming drawio (3)" src="https://github.com/user-attachments/assets/d5e6d76a-db7b-4cbc-8fd0-0e4032dc4f03" />
+
+
+
+
+
+
+
+
+
+
+
 
 ## 🧩 User Manual
 
@@ -71,7 +90,7 @@ The following section explains step-by-step how to use the **Nutrition Tracker**
 
 ---
 
-### 1️⃣ Start the Program
+### 1️. Start the Program
 
 When you start the program, the **main menu** will appear in your terminal.
 
@@ -90,7 +109,7 @@ Welcome to Nutrition Tracker!
 
 ---
 
-### 2️⃣ Add a New Food Entry
+### 2️. Add a New Food Entry
 
 Select option **1** from the main menu.  
 The program will ask you to enter information about your meal.
@@ -114,7 +133,7 @@ Date: 2025-11-04
 
 ---
 
-### 3️⃣ View All Entries
+### 3️. View All Entries
 
 Select option **2** from the main menu.  
 This will display all entries currently saved in the system.
@@ -130,7 +149,7 @@ Example output:
 
 ---
 
-### 4️⃣ View Entries from the Current Week
+### 4️. View Entries from the Current Week
 
 Select option **3** from the main menu.  
 This will show all entries recorded **within the last 7 days** and also calculate the **total calories of the week**.
@@ -148,7 +167,7 @@ Total calories this week: 1850 kcal
 
 ---
 
-### 5️⃣ Show Statistics
+### 5️. Show Statistics
 
 Select option **4** from the main menu.  
 The program will display simple statistics based on your stored data.
@@ -165,7 +184,7 @@ Lowest entry: Salad (300 kcal)
 
 ---
 
-### 6️⃣ Exit the Program
+### 6️. Exit the Program
 
 Select option **5** to close the program.  
 All your data will be saved automatically before the application exits.
@@ -180,7 +199,7 @@ Goodbye!
 
 ---
 
-### ✅ Summary of Menu Options
+### Summary of Menu Options
 
 | Option | Description |
 |:--:|:--|
@@ -192,7 +211,7 @@ Goodbye!
 
 ---
 
-### 🧠 Tips
+### Tips
 
 - Always enter numbers (calories) without extra spaces or letters.  
 - Dates must follow the format `YYYY-MM-DD` (for example: `2025-11-04`).  
