@@ -81,35 +81,11 @@ def main() -> None:
                 try:
                     if stats_choice == 1:
                         totals = data.getDailyTotals()
-                        if totals:
-                            ui.showEntries(totals, "Daily Total Intake")
-                            try:
-                                corrupt_count = data.scanCsvForCorruption()
-                                if corrupt_count > 0:
-                                    ui.showEntriesFailed(f"Warning: {corrupt_count} corrupted row(s) were skipped.")
-                            except IOError:
-                                pass  # If scanning fails, just skip warning
-                        else:
-                            ui.showEntriesFailed("No Entries Found for Today")
-                            try:
-                                corrupt_count = data.scanCsvForCorruption()
-                                if corrupt_count > 0:
-                                    ui.showEntriesFailed(f"Warning: {corrupt_count} corrupted row(s) were skipped.")
-                            except IOError:
-                                pass  # If scanning fails, just skip warning
+                        ui.show_stats_result(totals, "Daily Total Intake", "No Entries Found for Today")
                         stats_running = False  # Exit stats menu after showing result
                     elif stats_choice == 2:
                         averages = data.getWeeklyAverages()
-                        if averages:
-                            ui.showEntries(averages, "Weekly Average Intake")
-                        else:
-                            ui.showEntriesFailed("No Entries Found for this Week")
-                            try:
-                                corrupt_count = data.scanCsvForCorruption()
-                                if corrupt_count > 0:
-                                    ui.showEntriesFailed(f"Warning: {corrupt_count} corrupted row(s) were skipped.")
-                            except IOError:
-                                pass  # If scanning fails, just skip warning
+                        ui.show_stats_result(averages, "Weekly Average Intake", "No Entries Found for this Week")
                         stats_running = False  # Exit stats menu after showing result
                     elif stats_choice == 3:
                         ui.clearTerminal()
