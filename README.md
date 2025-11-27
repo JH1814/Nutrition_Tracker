@@ -1,13 +1,13 @@
-# Nutrition Tracker
+# 🍎 Nutrition Tracker
 ## Problem
 Many people track their daily nutrition manually using notes or spreadsheets, which often leads to **input errors, missing data**, and **no automatic** daily summaries.
 A console-based tracker can simplify this process by storing entries in a structured format and generating quick overviews.
 
-## Scenario
+## Scenario 🧭
 A user opens the program daily to record food items they’ve eaten — including date, category (e.g., protein, fat, carbs, sugar), and amount.
 The program validates the inputs, saves them into a file, and allows users to view summaries like total calories or nutrients per day or week.
 
-## User Stories
+## User Stories 📘
 1.	As a user, I want to **add food entries** with date, category, and quantity so I can track my nutrition.
 
 2.	As a user, I want to **get a list of all entries** to have a full overview about what I ate.
@@ -18,53 +18,154 @@ The program validates the inputs, saves them into a file, and allows users to vi
 
 5.	As a user, I want to be notified when I enter **invalid data** (e.g., wrong date or negative amount).
 
-## Use Cases
+## Use Cases 🔧
 * **Add Entry:** User inputs a new nutrition record.
 * **List Entries:** Display all or filtered records.
 * **Show Statistics:** Calculate and display daily or weekly totals.
 * **Save / Load Entries:** Store and retrieve entries from a file (.json or .csv).
 * **Exit:** Safely quit the program.
 
-## Project Requirements
+## Project Requirements ✅
 ### Each project must fulfill these three conditions:
 1.	**Interactive App (console input)**
 2.	**Data validation (input checking)**
 3.	**File processing (read/write)**
 
+## Filestructure 📂
+
+Project layout (excluding the `testing` folder):
+
+```
+Nutrition_Tracker/
+├── README.md                       # Project overview & user guide
+├── PROGRAM_OVERVIEW.md             # Detailed architecture & feature docs
+├── VALIDATION_DOCUMENTATION.md     # Validation logic explanations
+├── FILE_PROCESSING_DOCUMENTATION.md# File I/O process details
+├── USER_MANUAL.md                  # End-user manual
+├── src/                            # Source code
+│   ├── main.py                     # Entry point & main loop routing
+│   ├── ui.py                       # Terminal UI & input validation
+│   ├── data.py                     # Persistence + lookups + analytics
+│   └── data/                       # Data storage directory
+│       └── data.csv                # Persistent nutrition entries (CSV)
+└── .git/                           # Git metadata
+```
+
+### Architecture Overview 🧱
+- `main.py` (Flow Coordinator): Runs the loop, interprets user choices, dispatches operations.
+- `ui.py` (Presentation / Interaction): Renders menus & tables, performs input validation loops.
+- `data.py` (Data & Analytics): Handles file existence, CSV read/write, entry queries, daily/weekly computations, corruption scanning.
+- `src/data/data.csv` (Storage): Flat append-only store of nutrition records.
+
+Potential evolution (future, not implemented yet) could split `data.py` into distinct service and repository modules and introduce a domain data class for structured entries.
+
+### File / Module Roles 🗂️
+- `main.py`: Application flow & routing.
+- `ui.py`: Terminal interaction & validation.
+- `data.py`: Persistence + queries + analytics.
+- `data.csv`: Flat storage (append-only rows).
+
+This layout minimizes indirection while keeping responsibilities clear for a small codebase.
 
 
+### Flow (ASCII) 🔀
+```
+┌────────────────────────────┐
+│ if __name__ == "__main__"  │
+│        main()              │
+└────────────┬───────────────┘
+                         │
+                         ▼
+┌────────────────────────────┐
+│ is_running = True          │
+└────────────┬───────────────┘
+                         │
+                         ▼
+┌──────────────────────────────────────────────────────────┐
+│ MAIN LOOP (while is_running)                             │
+│  1. data.checkCsvFileExists()                            │
+│  2. ui.showMainMenu()                                    │
+│  3. choice = ui.getIntInput("Enter your Choice:")        │
+│  4. Route by choice                                      │
+└────────────┬─────────────────────────────────────────────┘
+                         │
+     ┌─────────┼───────────────────────────────────────────────────────────────────────────────┐
+     │         │                                                                                 │
+     │         │ Choice == 1 (Add Entry)                                                         │
+     │         │   ┌──────────────────────────────────────────────────────────────────────────┐  │
+     │         │   │ ui.clearTerminal()                                                        │  │
+     │         │   │ name = ui.getStringInput() (≤30 chars)                                    │  │
+     │         │   │ protein = ui.getFloatInput()                                             │  │
+     │         │   │ fat = ui.getFloatInput()                                                 │  │
+     │         │   │ carbs = ui.getFloatInput()                                               │  │
+     │         │   │ calories = ui.getFloatInput()                                            │  │
+     │         │   │ data.checkCsvFileExists()                                                │  │
+     │         │   │ data.writeNutritionData([... dt.now()])                                   │  │
+     │         │   │ ui.addNutritionSuccessfull() | ui.addNutritionFailed(e)                   │  │
+     │         │   └──────────────────────────────────────────────────────────────────────────┘  │
+     │         │                                                                                 │
+     │         │ Choice == 2 (Reuse Existing Entry)                                              │
+     │         │   ┌──────────────────────────────────────────────────────────────────────────┐  │
+     │         │   │ ui.clearTerminal()                                                        │  │
+     │         │   │ recipe = ui.getStringInput()                                              │  │
+     │         │   │ entry = data.getEntryByName(recipe)                                      │  │
+     │         │   │ IF entry found:                                                          │  │
+     │         │   │   data.checkCsvFileExists()                                              │  │
+     │         │   │   data.writeNutritionData(copy + new timestamp)                          │  │
+     │         │   │   ui.addNutritionSuccessfull()                                           │  │
+     │         │   │ ELSE: ui.addNutritionFailed("Recipe Not Found")                         │  │
+     │         │   └──────────────────────────────────────────────────────────────────────────┘  │
+     │         │                                                                                 │
+     │         │ Choice == 3 (View Entries)                                                      │
+     │         │   ┌──────────────────────────────────────────────────────────────────────────┐  │
+     │         │   │ ui.clearTerminal()                                                        │  │
+     │         │   │ entries = data.getAllEntries()                                            │  │
+     │         │   │ ui.showEntries(entries, "Nutrition Entries:")                           │  │
+     │         │   │ corrupt = data.scanCsvForCorruption() → if >0 ui.showEntriesFailed(warn)  │  │
+     │         │   └──────────────────────────────────────────────────────────────────────────┘  │
+     │         │                                                                                 │
+     │         │ Choice == 4 (Statistics Submenu)                                                │
+     │         │   ┌──────────────────────────────────────────────────────────────────────────┐  │
+     │         │   │ stats_running = True                                                      │  │
+     │         │   │ WHILE stats_running:                                                      │  │
+     │         │   │   ui.showStatisticsMenu()                                                 │  │
+     │         │   │   stats_choice = ui.getIntInput()                                         │  │
+     │         │   │   IF 1 (Daily Totals):                                                    │  │
+     │         │   │     totals = data.getDailyTotals()                                        │  │
+     │         │   │     IF totals: ui.showEntries(totals) ELSE ui.showEntriesFailed("None")  │  │
+     │         │   │     data.scanCsvForCorruption() warning if needed                        │  │
+     │         │   │     stats_running = False                                                 │  │
+     │         │   │   IF 2 (Weekly Averages):                                                 │  │
+     │         │   │     averages = data.getWeeklyAverages()                                   │  │
+     │         │   │     IF averages: ui.showEntries(averages) ELSE ui.showEntriesFailed("None")│ │
+     │         │   │     data.scanCsvForCorruption() warning if needed                        │  │
+     │         │   │     stats_running = False                                                 │  │
+     │         │   │   IF 3 (Back): stats_running = False                                      │  │
+     │         │   └──────────────────────────────────────────────────────────────────────────┘  │
+     │         │                                                                                 │
+     │         │ Choice == 5 (Exit)                                                              │
+     │         │   ┌──────────────────────────────────────────────────────────────────────────┐  │
+     │         │   │ ui.exitMessage()                                                          │  │
+     │         │   │ is_running = False                                                        │  │
+     │         │   └──────────────────────────────────────────────────────────────────────────┘  │
+     │         │                                                                                 │
+     │         │ ELSE (Invalid Choice) → ui.invalidChoice()                                      │
+     └─────────┘                                                                                 │
+                         │                                                                                 │
+                         ▼                                                                                 │
+┌────────────────────────────┐                                                                 │
+│ is_running == False ?      │◀────────────────────────────────────────────────────────────────┘
+└────────────┬───────────────┘
+                         │YES
+                         ▼
+┌────────────────────────────┐
+│          EXIT               │
+└────────────────────────────┘
+                         │NO (loop) re-enters main while
+                         └──▶ CONTINUE LOOP
+```
 
-
-
-## Filestructure  
-
-Our project uses the **MVC structure (Model - View - Controller)**.  
-This structure helps to keep the code clean, organized, and easy to maintain.
-
-### Model
-The Model handles all data operations.  
-It reads and writes data from the `data.csv` file and contains the main program logic such as calculations and data validation.
-
-### View
-The View is responsible for displaying information to the user.  
-It shows menus, messages, and outputs in the console.
-
-### Controller
-The Controller manages the connection between the Model and the View.  
-It receives user input, decides what to do, and coordinates actions between data and output.
-
-### main.py
-The `main.py` file is the entry point of the program.  
-It starts the Controller and connects all parts of the application.
-
-### data.csv
-The `data.csv` file stores all saved user data.  
-It is used by the Model for loading and saving information.
-
-
-
-
-### Flowchart
+### Flowchart 🗺️
 
 
 
@@ -91,7 +192,7 @@ The following section explains step-by-step how to use the **Nutrition Tracker**
 
 ---
 
-### 1️. Start the Program
+### 1️. Start the Program 🚀
 
 When you start the program, the **main menu** will appear in your terminal.
 
@@ -110,7 +211,7 @@ Welcome to Nutrition Tracker!
 
 ---
 
-### 2️. Add a New Food Entry
+### 2️. Add a New Food Entry ➕
 
 Select option **1** from the main menu.  
 The program will ask you to enter information about your meal.
@@ -134,7 +235,7 @@ Date: 2025-11-04
 
 ---
 
-### 3️. View All Entries
+### 3️. View All Entries 📋
 
 Select option **2** from the main menu.  
 This will display all entries currently saved in the system.
@@ -150,7 +251,7 @@ Example output:
 
 ---
 
-### 4️. View Entries from the Current Week
+### 4️. View Entries from the Current Week 🗓️
 
 Select option **3** from the main menu.  
 This will show all entries recorded **within the last 7 days** and also calculate the **total calories of the week**.
@@ -168,7 +269,7 @@ Total calories this week: 1850 kcal
 
 ---
 
-### 5️. Show Statistics
+### 5️. Show Statistics 📊
 
 Select option **4** from the main menu.  
 The program will display simple statistics based on your stored data.
@@ -185,7 +286,7 @@ Lowest entry: Salad (300 kcal)
 
 ---
 
-### 6️. Exit the Program
+### 6️. Exit the Program 🚪
 
 Select option **5** to close the program.  
 All your data will be saved automatically before the application exits.
@@ -212,12 +313,13 @@ Goodbye!
 
 ---
 
-### Tips
+### Tips 💡
 
 - Always enter numbers (calories) without extra spaces or letters.  
 - Dates must follow the format `YYYY-MM-DD` (for example: `2025-11-04`).  
 - If the program displays an error, just follow the message and re-enter the correct value.  
 - Use lowercase “yes” / “no” when the program asks for a confirmation (if implemented).  
+- Names are limited to 30 characters; use concise, descriptive titles.  
 
 ---
 
