@@ -71,7 +71,8 @@ It is used by the Model for loading and saving information.
 
 
 
-<img width="1597" height="2262" alt="Readme_Flowchart_Programming drawio (3)" src="https://github.com/user-attachments/assets/d5e6d76a-db7b-4cbc-8fd0-0e4032dc4f03" />
+<img width="1597" height="2262" alt="Readme_Flowchart_Programming drawio (4)" src="https://github.com/user-attachments/assets/455ef8fd-7ca1-41c0-8ee9-8e495540cad1" />
+
 
 
 
