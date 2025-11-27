@@ -1,8 +1,9 @@
 import csv
 import datetime
+import os
 
 # variable for CSV path
-csv_file_path = "./data/data.csv"
+csv_file_path = os.path.join(os.path.dirname(__file__), "data", "data.csv")
 
 def writeNutritionData(data: list) -> None:
     with open(csv_file_path, "a") as file:
@@ -46,8 +47,10 @@ def scanCsvForCorruption() -> int:
                 continue
             # Check for invalid DateTime
             try:
-                _ = datetime.datetime.fromisoformat(row['DateTime'])
-            except Exception:
+                dt_str = row.get('DateTime', '')
+                # '_' is a throwaway variable: we only validate parseability
+                _ = datetime.datetime.fromisoformat(dt_str)
+            except (ValueError, TypeError, KeyError):
                 corrupt_count += 1
                 continue
     return corrupt_count
@@ -111,6 +114,7 @@ def getEntryByName(name: str) -> list[dict]:
     return entry
 
 def createCsvFile() -> None:
+    os.makedirs(os.path.dirname(csv_file_path), exist_ok=True)
     with open(csv_file_path, "w") as file:
         writer = csv.writer(file)
         writer.writerow(["Name", "Protein", "Fat", "Carbs", "Calories", "DateTime"])
@@ -150,6 +154,7 @@ def getDailyTotals() -> list[dict]:
             pass  # Skip malformed entries
 
     return [{
+        'Name': 'Daily Total',
         'Protein': round(total_protein, 2), 
         'Fat': round(total_fat, 2), 
         'Carbs': round(total_carbs, 2), 
@@ -182,6 +187,7 @@ def getWeeklyAverages() -> list[dict]:
     # Calculate averages
     count = len(entries)
     return [{
+        'Name': 'Weekly Average',
         'Protein': round(total_protein / count, 2),
         'Fat': round(total_fat / count, 2),
         'Carbs': round(total_carbs / count, 2),
