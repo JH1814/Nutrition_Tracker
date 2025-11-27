@@ -29,16 +29,16 @@ Welcome to the Nutrition Tracker! This manual will guide you through all feature
 
 ### Starting the Application ▶️
 
-**On Windows:**
+From the project root or `src` folder:
+
+**Windows:**
 ```bash
-cd path\to\Nutrition_Tracker\src
-python main.py
+python src\main.py
 ```
 
-**On Mac/Linux:**
+**Mac/Linux:**
 ```bash
-cd path/to/Nutrition_Tracker/src
-python3 main.py
+python3 src/main.py
 ```
 
 ### First Launch 🟢
@@ -172,11 +172,9 @@ Add Calories in kcal: 220
 ### Automatic Timestamp ⏱️
 
 The program automatically records:
-- **Date:** When the entry was added
-- **Time:** Exact hour, minute, second
-- **Format:** `2025-11-27 14:30:15.123456`
-
-You don't need to enter this manually!
+- Date and time when the entry was added
+- ISO-like format (e.g., `2025-11-27 14:30:15.123456`)
+- No manual date entry required
 
 ---
 
@@ -316,6 +314,7 @@ Press Enter to continue...
 | **Calories** | Energy content in kilocalories | `350 kcal` |
 
 **Note:** The DateTime field is stored but not displayed in the list view.
+Entries show name and nutrients; timestamps are available in the CSV.
 
 ### Data Quality Warnings ⚠️
 
