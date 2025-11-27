@@ -20,8 +20,9 @@ def main() -> None:
             calories = ui.getFloatInput("Add Calories in kcal: ")
 
             try:
+                data.checkCsvFileExists()
                 data.writeNutritionData([name, protein, fat, carbs, calories, datetime.datetime.now()])
-                ui.addNutritionSuccessfull()
+                ui.addNutritionSuccessful()
             except FileNotFoundError as e:
                 data.createCsvFile()
                 ui.addNutritionFailed(e)
@@ -29,7 +30,6 @@ def main() -> None:
         elif choice == 2:
             ui.clearTerminal()
             recipe = ui.getStringInput("Enter the Name of the Recipe to use from the Nutrition Entries List: ")
-            entry = []
             try:
                 entry = data.getEntryByName(recipe)
 
@@ -45,7 +45,7 @@ def main() -> None:
                 try:
                     data.checkCsvFileExists()
                     data.writeNutritionData((entry[0]["Name"], entry[0]["Protein"], entry[0]["Fat"], entry[0]["Carbs"], entry[0]["Calories"], datetime.datetime.now()))
-                    ui.addNutritionSuccessfull()
+                    ui.addNutritionSuccessful()
                 except FileNotFoundError as e:
                     data.createCsvFile()
                     ui.addNutritionFailed(e)
@@ -56,7 +56,7 @@ def main() -> None:
             ui.clearTerminal()
             try:
                 entries = data.getAllEntries()
-                ui.show_stats_result(entries, "Nutrition Entries:", "No Entries Found.")
+                ui.showStatsResult(entries, "Nutrition Entries:", "No Entries Found.")
             except FileNotFoundError as e:
                 data.createCsvFile()
                 ui.showEntriesFailed(e)
@@ -73,11 +73,11 @@ def main() -> None:
                 try:
                     if stats_choice == 1:
                         totals = data.getDailyTotals()
-                        ui.show_stats_result(totals, "Daily Total Intake", "No Entries Found for Today")
+                        ui.showStatsResult(totals, "Daily Total Intake", "No Entries Found for Today")
                         stats_running = False  # Exit stats menu after showing result
                     elif stats_choice == 2:
                         averages = data.getWeeklyAverages()
-                        ui.show_stats_result(averages, "Weekly Average Intake", "No Entries Found for this Week")
+                        ui.showStatsResult(averages, "Weekly Average Intake", "No Entries Found for this Week")
                         stats_running = False  # Exit stats menu after showing result
                     elif stats_choice == 3:
                         ui.clearTerminal()
