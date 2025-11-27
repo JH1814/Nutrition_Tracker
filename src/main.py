@@ -20,7 +20,6 @@ def main() -> None:
             calories = ui.getFloatInput("Add Calories in kcal: ")
 
             try:
-                data.checkCsvFileExists()
                 data.writeNutritionData([name, protein, fat, carbs, calories, datetime.datetime.now()])
                 ui.addNutritionSuccessfull()
             except FileNotFoundError as e:
@@ -57,14 +56,7 @@ def main() -> None:
             ui.clearTerminal()
             try:
                 entries = data.getAllEntries()
-                ui.showEntries(entries, "Nutrition Entries:")
-                # Warn if any corrupted rows were detected in CSV
-                try:
-                    corrupt_count = data.scanCsvForCorruption()
-                    if corrupt_count > 0:
-                        ui.showEntriesFailed(f"Warning: {corrupt_count} corrupted row(s) were skipped.")
-                except IOError:
-                    pass  # If scanning fails, just skip warning
+                ui.show_stats_result(entries, "Nutrition Entries:", "No Entries Found.")
             except FileNotFoundError as e:
                 data.createCsvFile()
                 ui.showEntriesFailed(e)
