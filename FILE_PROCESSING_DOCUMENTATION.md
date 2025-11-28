@@ -210,10 +210,10 @@ try:
     data.check_csv_file_exists()  # Ensure file exists
     # Write with current timestamp
     data.write_nutrition_data([name, protein, fat, carbs, calories, datetime.datetime.now()])
-    ui.addNutritionSuccessfull()
+    ui.add_nutrition_successful()
 except FileNotFoundError as e:
     data.create_csv_file()
-    ui.addNutritionFailed(e)
+    ui.add_nutrition_failed(e)
 ```
 
 **Process flow:**
@@ -243,10 +243,10 @@ if entry:
             entry[0]["Calories"], 
             datetime.datetime.now()  # New timestamp
         ))
-        ui.addNutritionSuccessfull()
+        ui.add_nutrition_successful()
     except FileNotFoundError as e:
         data.create_csv_file()
-        ui.addNutritionFailed(e)
+        ui.add_nutrition_failed(e)
 ```
 
 **Key difference:**
@@ -456,13 +456,13 @@ def getEntriesWithinWeek() -> list[dict]:
 
 ### 6.3 Get Entry by Name 🔤
 
-**Function:** `getEntryByName(name: str) -> list[dict]`
+**Function:** `get_entry_by_name(name: str) -> list[dict]`
 
 **Purpose:** Find the first entry matching a specific name
 
 **Implementation:**
 ```python
-def getEntryByName(name: str) -> list[dict]:
+def get_entry_by_name(name: str) -> list[dict]:
     entry = []
     with open(csv_file_path,'r') as file:
         reader = csv.DictReader(file)
@@ -496,13 +496,13 @@ def getEntryByName(name: str) -> list[dict]:
 
 ### 6.4 Corruption Scanning ⚠️
 
-**Function:** `scanCsvForCorruption() -> int`
+**Function:** `scan_csv_for_corruption() -> int`
 
 **Purpose:** Count corrupted rows without modifying data
 
 **Implementation:**
 ```python
-def scanCsvForCorruption() -> int:
+def scan_csv_for_corruption() -> int:
     corrupt_count = 0
     with open(csv_file_path,'r') as file:
         reader = csv.DictReader(file)
@@ -559,16 +559,16 @@ with open(csv_file_path, mode) as file:
 
 ```python
 # Operation 1: Check existence
-checkCsvFileExists()  # Opens file in 'r' mode
+check_csv_file_exists()  # Opens file in 'r' mode
 
 # Operation 2: Read data
-entries = getAllEntries()  # Opens file in 'r' mode again
+entries = get_all_entries()  # Opens file in 'r' mode again
 
 # Operation 3: Scan corruption
-corrupt_count = scanCsvForCorruption()  # Opens file in 'r' mode again
+corrupt_count = scan_csv_for_corruption()  # Opens file in 'r' mode again
 
 # Operation 4: Write data
-writeNutritionData(data)  # Opens file in 'a' mode
+write_nutrition_data(data)  # Opens file in 'a' mode
 ```
 
 **Characteristics:**
@@ -632,8 +632,8 @@ for row in reader:
 | `get_all_entries()` | 1 read | Yes | O(n) |
 | `getEntriesByDate()` | 1 read | Yes | O(n) |
 | `getEntriesWithinWeek()` | 1 read | Yes | O(n) |
-| `getEntryByName()` | 1 read | Partial (breaks on match) | O(n) worst case, O(1) best case |
-| `scanCsvForCorruption()` | 1 read | Yes | O(n) |
+| `get_entry_by_name()` | 1 read | Partial (breaks on match) | O(n) worst case, O(1) best case |
+| `scan_csv_for_corruption()` | 1 read | Yes | O(n) |
 
 Where n = number of rows in CSV
 
@@ -645,7 +645,7 @@ Where n = number of rows in CSV
 
 ```python
 entries = data.get_all_entries()  # File opened & read
-corrupt_count = data.scanCsvForCorruption()  # File opened & read again
+corrupt_count = data.scan_csv_for_corruption()  # File opened & read again
 ```
 
 **Total:** 2 file opens, 2 complete reads of all rows
@@ -673,7 +673,7 @@ entries = get_all_entries()  # Loads ALL rows into memory
 ### 8.4 Current Limitations ⚠️
 
 1. **Multiple file reads:** Same data read multiple times per operation
-   - Viewing entries reads file twice (getAllEntries + scanCsvForCorruption)
+    - Viewing entries reads file twice (get_all_entries + scan_csv_for_corruption)
    - Statistics read file, then process in memory
 
 2. **Full table scans:** Every query reads entire file
@@ -739,9 +739,9 @@ entries = get_all_entries()  # Loads ALL rows into memory
   [WRITE]        [READ]        [QUERY]
       │              │              │
       ▼              ▼              ▼
-writeNutrition  getAllEntries  getEntriesByDate
+write_nutrition  get_all_entries  get_entries_by_date
   Data()                        getEntriesWithinWeek
-  - Open 'a'     - Open 'r'     getEntryByName
+    - Open 'a'     - Open 'r'     get_entry_by_name
   - Append row   - DictReader   
   - Close        - Filter       - Open 'r'
                  - Return list  - DictReader

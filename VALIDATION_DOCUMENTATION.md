@@ -145,7 +145,7 @@ if not row.get('Name', '').strip():
 ```
 
 ```python
-# In getEntryByName()
+# In get_entry_by_name()
 if not row.get('Name', '').strip():
     continue  # Skip corrupted row
 ```
@@ -211,7 +211,7 @@ except (ValueError, KeyError):
 
 ### 3.1 Corruption Scanning Function
 
-**Function:** `scanCsvForCorruption() -> int`
+**Function:** `scan_csv_for_corruption() -> int`
 
 **What is validated:**
 - Entire CSV file is scanned for corrupted rows
@@ -219,7 +219,7 @@ except (ValueError, KeyError):
 
 **Implementation:**
 ```python
-def scanCsvForCorruption() -> int:
+def scan_csv_for_corruption() -> int:
     """Scan the CSV for corrupted rows and return the count.
 
     A row is considered corrupted if:
@@ -258,9 +258,9 @@ def scanCsvForCorruption() -> int:
 **Usage in application:**
 ```python
 # In main.py - After viewing entries
-corrupt_count = data.scanCsvForCorruption()
+corrupt_count = data.scan_csv_for_corruption()
 if corrupt_count > 0:
-    ui.showEntriesFailed(f"Warning: {corrupt_count} corrupted row(s) were skipped.")
+    ui.show_entries_failed(f"Warning: {corrupt_count} corrupted row(s) were skipped.")
 ```
 
 ---
@@ -269,9 +269,9 @@ if corrupt_count > 0:
 
 **Strategy:** All data retrieval functions skip corrupted rows instead of crashing
 
-**Example from `getAllEntries()`:**
+**Example from `get_all_entries()`:**
 ```python
-def getAllEntries() -> list:
+def get_all_entries() -> list:
     entries = []
     with open(csv_file_path,'r') as file:
         reader = csv.DictReader(file)
@@ -349,7 +349,7 @@ def create_csv_file() -> None:
 
 ### 5.1 Daily Totals Calculation
 
-**Function:** `getDailyTotals() -> list[dict]`
+**Function:** `get_daily_totals() -> list[dict]`
 
 **What is validated:**
 - Entries exist for the requested date
@@ -358,7 +358,7 @@ def create_csv_file() -> None:
 
 **Implementation:**
 ```python
-def getDailyTotals() -> list[dict]:
+def get_daily_totals() -> list[dict]:
     entries = getEntriesByDate()
 
     if not entries:
@@ -399,7 +399,7 @@ def getDailyTotals() -> list[dict]:
 
 ### 5.2 Weekly Averages Calculation
 
-**Function:** `getWeeklyAverages() -> list[dict]`
+**Function:** `get_weekly_averages() -> list[dict]`
 
 **What is validated:**
 - Same validations as daily totals
@@ -407,7 +407,7 @@ def getDailyTotals() -> list[dict]:
 
 **Implementation:**
 ```python
-def getWeeklyAverages() -> list[dict]:
+def get_weekly_averages() -> list[dict]:
     entries = getEntriesWithinWeek()
 
     if not entries:
@@ -451,10 +451,10 @@ def getWeeklyAverages() -> list[dict]:
 try:
     data.check_csv_file_exists()
     data.write_nutrition_data([name, protein, fat, carbs, calories, datetime.datetime.now()])
-    ui.addNutritionSuccessfull()
+    ui.add_nutrition_successful()
 except FileNotFoundError as e:
     data.create_csv_file()
-    ui.addNutritionFailed(e)
+    ui.add_nutrition_failed(e)
 ```
 
 **Validation:**
@@ -479,12 +479,12 @@ except ValueError as e:
 if entry:
     try:
         data.write_nutrition_data((entry[0]["Name"], ...))
-        ui.addNutritionSuccessfull()
+        ui.add_nutrition_successful()
     except FileNotFoundError as e:
         data.create_csv_file()
-        ui.addNutritionFailed(e)
+        ui.add_nutrition_failed(e)
 else:
-    ui.addNutritionFailed("Recipe Not Found in the Nutrition Entries List.")
+    ui.add_nutrition_failed("Recipe Not Found in the Nutrition Entries List.")
 ```
 
 **Validation:**
@@ -500,17 +500,17 @@ else:
 ```python
 try:
     entries = data.get_all_entries()
-    ui.showEntries(entries, "Nutrition Entries:")
+    ui.show_entries(entries, "Nutrition Entries:")
     # Corruption detection
     try:
-        corrupt_count = data.scanCsvForCorruption()
+        corrupt_count = data.scan_csv_for_corruption()
         if corrupt_count > 0:
-            ui.showEntriesFailed(f"Warning: {corrupt_count} corrupted row(s) were skipped.")
+            ui.show_entries_failed(f"Warning: {corrupt_count} corrupted row(s) were skipped.")
     except IOError:
         pass  # Skip warning if scan fails
 except FileNotFoundError as e:
     data.create_csv_file()
-    ui.showEntriesFailed(e)
+    ui.show_entries_failed(e)
 except IndexError as e:
     ui.showEntriesFailed(e)
 ```
@@ -528,12 +528,12 @@ except IndexError as e:
 ```python
 try:
     if stats_choice == 1:
-        totals = data.getDailyTotals()
+        totals = data.get_daily_totals()
         if totals:
-            ui.showEntries(totals, "Daily Total Intake")
+            ui.show_entries(totals, "Daily Total Intake")
             # Corruption warning
         else:
-            ui.showEntriesFailed("No Entries Found for Today")
+            ui.show_entries_failed("No Entries Found for Today")
             # Corruption warning
     # Similar for weekly averages...
 except FileNotFoundError as e:

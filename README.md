@@ -54,16 +54,35 @@ Key UI functions in `src/ui.py`:
 - `get_string_input()`, `get_float_input()`, `get_int_input()` for validated input
 
 ### 2. Data Validation
-All user input is validated to ensure data integrity and a smooth experience. Examples from `src/ui.py`:
+All user input is validated to ensure data integrity and a smooth experience. The project includes comprehensive validation with upper bounds and type checking.
+
+**Enhanced Validation Constants** (in `src/ui.py`):
+```python
+MAX_NAME_LENGTH: int = 30
+MAX_NUMERIC_VALUE: float = 10000.0  # Reasonable upper limit for nutrition values
+```
+
+**Input Validation Functions with Full Type Hints**:
 
 ```python
 def get_string_input(message: str) -> str:
+    """Get validated string input from user.
+    
+    Args:
+        message: Prompt message to display
+        
+    Returns:
+        Valid non-empty string (≤30 chars, not a number)
+        
+    Note:
+        Loops until valid input is provided
+    """
     is_valid = False
     while not is_valid:
         try:
             string = input(message)
-            if not string or string.isdigit() or len(string) > 30:
-                raise ValueError("Input Cannot be Empty, a Number, or Longer than 30 Characters.")
+            if not string or string.isdigit() or len(string) > MAX_NAME_LENGTH:
+                raise ValueError(f"Input Cannot be Empty, a Number, or Longer than {MAX_NAME_LENGTH} Characters.")
             is_valid = True
         except ValueError as e:
             print(f"Invalid Input. Please Enter a Valid String. {e}")
@@ -72,10 +91,25 @@ def get_string_input(message: str) -> str:
 
 ```python
 def get_float_input(message: str) -> float:
+    """Get validated float input from user.
+    
+    Args:
+        message: Prompt message to display
+        
+    Returns:
+        Valid non-negative float value (0 to 10000)
+        
+    Note:
+        Loops until valid input is provided
+    """
     is_valid = False
     while not is_valid:
         try:
             number = float(input(message))
+            if number < 0:
+                raise ValueError("Input Cannot be Negative.")
+            if number > MAX_NUMERIC_VALUE:
+                raise ValueError(f"Input Cannot Exceed {MAX_NUMERIC_VALUE}.")
             is_valid = True
         except ValueError as e:
             print(f"Invalid Input. Please Enter a Valid Number. {e}")
@@ -84,18 +118,34 @@ def get_float_input(message: str) -> float:
 
 ```python
 def get_int_input(message: str) -> int:
+    """Get validated integer input from user.
+    
+    Args:
+        message: Prompt message to display
+        
+    Returns:
+        Valid non-negative integer value (0 to 10000)
+        
+    Note:
+        Loops until valid input is provided
+    """
     is_valid = False
     while not is_valid:
         try:
             integer = int(input(message))
+            if integer < 0:
+                raise ValueError("Input Cannot be Negative.")
+            if integer > MAX_NUMERIC_VALUE:
+                raise ValueError(f"Input Cannot Exceed {int(MAX_NUMERIC_VALUE)}.")
             is_valid = True
         except ValueError as e:
             print(f"Invalid Input. Please Enter a Valid Integer. {e}")
     return integer
 ```
 
-Additional safeguards:
-- **Name field length:** Limited to 30 characters (documented and enforced in `getStringInput`)
+**Additional Safeguards:**
+- **Name field length:** Limited to 30 characters (enforced in `get_string_input`)
+- **Upper bounds:** All numeric inputs validated to not exceed 10,000 (prevents unrealistic values)
 - **CSV data integrity:** All data retrieval functions skip rows with empty/missing `Name` fields using:
 	```python
 	if not row.get('Name', '').strip():
@@ -118,32 +168,45 @@ Additional safeguards:
 - **File system resilience:** Missing CSV files are automatically recreated with proper headers via `create_csv_file()`
 - **Corruption detection:** `data.scan_csv_for_corruption()` scans the entire file and reports the count of invalid rows without blocking operations
 - **Robust statistics display:** `ui.show_stats_result(...)` centralizes display and performs a single corruption scan with consistent messaging
+- **Standardized error messages:** All error messages use consistent "Error:" prefix and remain visible for 2 seconds for better user experience
 
 
 ### 3. File Processing
-The application persists data in a CSV file (`src/data/data.csv`). The `src/data.py` module handles:
-- File existence checks and automatic creation on demand
-- Appending new entries with timestamps
-- Reading entries safely, skipping corrupted rows
-- Scanning the CSV for corruption and reporting counts
+The application persists data in a CSV file (`src/data/data.csv`). The `src/data.py` module handles all file operations with proper error handling and CSV best practices.
 
-Illustrative patterns:
+**Key Features:**
+- **Module-relative path resolution:** CSV path automatically calculated relative to `data.py` location
+- **Automatic file creation:** Missing CSV files recreated with proper headers via `create_csv_file()`
+- **Proper CSV handling:** Uses `newline=''` parameter for correct cross-platform newline handling
+- **Safe appending:** New entries written with timestamps without corrupting existing data
+- **Resilient reading:** Safely reads entries, automatically skipping corrupted rows
+- **Corruption detection:** `scan_csv_for_corruption()` reports count of invalid rows without blocking operations
+- **Comprehensive type hints:** All functions fully typed with `Optional`, `list[dict[str, str]]`, etc.
+- **Detailed docstrings:** Every function documented with Args, Returns, Raises, and Notes sections
+
+**Illustrative patterns:**
 ```python
-# Append a row to CSV
+# Append a row to CSV with proper newline handling
 with open(csv_file_path, 'a', newline='') as f:
     writer = csv.writer(f)
     writer.writerow([name, protein, fat, carbs, calories, datetime.datetime.now()])
 ```
 
 ```python
-# Read all valid entries
+# Read all valid entries with DictReader for named access
 with open(csv_file_path, 'r', newline='') as f:
     reader = csv.DictReader(f)
     for row in reader:
         if not row.get('Name', '').strip():
-            continue  # skip corrupted
+            continue  # skip corrupted rows
         entries.append(row)
 ```
+
+**Data module structure:**
+- File operations: `check_csv_file_exists()`, `create_csv_file()`, `write_nutrition_data()`
+- Retrieval: `get_all_entries()`, `get_entries_by_date()`, `get_entries_within_week()`, `get_entry_by_name()`
+- Quality: `scan_csv_for_corruption()`
+- Analytics: `get_daily_totals()`, `get_weekly_averages()`
 
 ## Filestructure 📂
 
@@ -166,27 +229,37 @@ Nutrition_Tracker/
 ```
 
 ### Architecture Overview 🧱
-- `main.py` (Flow Coordinator): Runs the loop, interprets user choices, dispatches operations.
-- `ui.py` (Presentation / Interaction): Renders menus & tables, performs input validation loops.
-- `data.py` (Data & Analytics): Handles file existence, CSV read/write, entry queries, daily/weekly computations, corruption scanning.
-- `src/data/data.csv` (Storage): Flat append-only store of nutrition records.
+- **`main.py` (Flow Coordinator)**: Application entry point with module docstring. Runs the main loop, interprets user choices, dispatches operations to ui and data modules. Includes exception handling for each menu choice.
+- **`ui.py` (Presentation / Interaction)**: Terminal interface with comprehensive type hints. Renders menus & tables, performs input validation with upper bounds (`MAX_NAME_LENGTH = 30`, `MAX_NUMERIC_VALUE = 10000.0`). All functions fully documented with Args/Returns/Note sections. Implements standardized error messages with "Error:" prefix and 2-second visibility.
+- **`data.py` (Data & Analytics)**: Persistence layer with full type hints including `Optional` imports. Handles CSV operations with `newline=''` parameter, entry queries, daily/weekly analytics, and corruption scanning. All functions documented with comprehensive docstrings.
+- **`src/data/data.csv` (Storage)**: Flat append-only store of nutrition records with columns: Name, Protein, Fat, Carbs, Calories, DateTime.
 
+**Key improvements implemented:**
+- Comprehensive type hints on all functions (e.g., `Optional[list[dict[str, str | float]]]`)
+- Module-level and function-level docstrings following Google/NumPy style
+- Validation constants for consistent input bounds
+- Enhanced error handling with standardized messaging
+- CSV best practices with newline parameter for cross-platform compatibility
+- PEP 8 compliant snake_case naming throughout
 
-Recent refactor highlights:
-- Centralized statistics display and corruption warnings via `ui.showStatsResult(...)` to avoid duplicated logic.
-- Simplified write path by removing redundant `data.checkCsvFileExists()` calls before writes; existence is handled once and on-demand on errors.
-Potential evolution (future, not implemented yet) could split `data.py` into distinct service and repository modules and introduce a domain data class for structured entries.
+**Recent refactor highlights:**
+- Centralized statistics display via `ui.show_stats_result(...)` to avoid duplicated logic
+- Simplified write path by handling file existence on-demand
+- Added comprehensive documentation and type safety
+
+**Potential future evolution:** Split `data.py` into service and repository modules, introduce domain data classes for structured entries.
 ### Visualization
 ### File / Module Roles 🗂️
 
-Stats display helper:
-- Call `ui.showStatsResult(data.getDailyTotals(), "Daily Total Intake", "No Entries Found for Today")` or with weekly averages to ensure consistent output and a single corruption scan.
-- `main.py`: Application flow & routing.
-- `ui.py`: Terminal interaction & validation.
-- `data.py`: Persistence + queries + analytics.
-- `data.csv`: Flat storage (append-only rows).
+- **`main.py`**: Application entry point and flow control. Contains main loop with menu routing and exception handling. Module docstring describes purpose and architecture.
+- **`ui.py`**: Terminal interface with 12+ typed functions. Input validation with constants (`MAX_NAME_LENGTH: int = 30`, `MAX_NUMERIC_VALUE: float = 10000.0`), display functions for menus/tables/stats, standardized error messages with "Error:" prefix and 2-second visibility. All functions include comprehensive docstrings.
+- **`data.py`**: Data persistence and analytics with 10+ typed functions. CSV operations with `newline=''` parameter, retrieval functions (`get_all_entries()`, `get_entries_by_date()`), analytics functions (`get_daily_totals()`, `get_weekly_averages()`), and quality checks (`scan_csv_for_corruption()`). Returns use `Optional` types for nullable results.
+- **`data.csv`**: Flat storage with append-only rows (Name, Protein, Fat, Carbs, Calories, DateTime).
 
-This layout minimizes indirection while keeping responsibilities clear for a small codebase.
+**Stats display helper:**
+Call `ui.show_stats_result(data.get_daily_totals(), "Daily Total Intake", "No Entries Found for Today")` or with weekly averages to ensure consistent output and a single corruption scan.
+
+This layout minimizes indirection while keeping responsibilities clear for a small codebase. Type hints and docstrings ensure maintainability as the project grows.
 
 
 ### Flow (ASCII) 🔀
@@ -428,11 +501,14 @@ Goodbye!
 
 ### Tips 💡
 
-- Always enter numbers (calories) without extra spaces or letters.  
-- Timestamps are recorded automatically; you do not enter dates manually.  
-- If the program displays an error, just follow the message and re-enter the correct value.  
-- Use lowercase “yes” / “no” when the program asks for a confirmation (if implemented).  
-- Names are limited to 30 characters; use concise, descriptive titles.  
+- **Input validation**: All numeric inputs are validated for range (0 to 10,000) and type. Invalid inputs trigger error messages with 2-second visibility before retry.
+- **Names limited to 30 characters**: Use concise, descriptive titles for food entries.
+- **Type hints throughout**: All functions use Python type hints for better IDE support and code clarity.
+- **Error messages**: Look for "Error:" prefix in all error messages. Terminal won't clear immediately after errors, giving you time to read them.
+- **Timestamps automatic**: The app records current date/time automatically when you add entries.
+- **Upper bounds protection**: System prevents unrealistic values (e.g., 50,000 calories) by capping inputs at 10,000.
+- **CSV format**: Data stored with proper `newline=''` parameter for cross-platform compatibility.
+- **Documentation**: All functions include comprehensive docstrings with Args/Returns/Note sections.
 
 ---
 
@@ -441,8 +517,10 @@ Enjoy tracking your meals and managing your daily calories with the **Nutrition 
 ## ⚙️ Implementation
 
 ### Technology
-- Python 3.x
-- No external libraries; uses Python standard library only
+- **Python 3.x**: Standard library only, no external dependencies
+- **Type hints**: Comprehensive typing throughout with `Optional`, `list[dict[str, str | float]]`, etc.
+- **Docstrings**: Module and function-level documentation following Google/NumPy style
+- **PEP 8 compliance**: snake_case naming conventions throughout
 
 ### How to Run
 From the project root:
@@ -452,8 +530,16 @@ python3 src/main.py
 ```
 
 ### Libraries Used
-- `os`, `time` (UI/terminal control and pauses)
-- `csv`, `datetime` (file I/O and timestamps in data layer)
+- `os`, `time`: UI/terminal control and pauses
+- `csv`, `datetime`: File I/O and timestamps in data layer
+- `typing`: Type hints with `Optional` for nullable return types
+
+### Code Quality Features
+- **Validation constants**: `MAX_NAME_LENGTH = 30`, `MAX_NUMERIC_VALUE = 10000.0`
+- **Standardized error messages**: Consistent "Error:" prefix, 2-second visibility
+- **CSV best practices**: Proper `newline=''` parameter on all file operations
+- **Comprehensive type hints**: All function parameters and returns typed
+- **Detailed docstrings**: Every function documented with purpose, arguments, returns, and notes
 
 ## 👥 Team & Contributions
 

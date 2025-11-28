@@ -79,8 +79,8 @@ def show_stats_result(result: Optional[list[dict[str, str | float]]], title: str
         pass
 
 def show_entries_failed(error: str) -> None:
-    clear_terminal()
-    print(f"No Entries Found: {error}")
+    # Do not clear immediately; show consistent error prefix so users can read
+    print(f"Error: No Entries Found. Details: {error}")
     time.sleep(2)
 
 def add_nutrition_successful() -> None:
@@ -89,16 +89,14 @@ def add_nutrition_successful() -> None:
     time.sleep(1)
 
 def add_nutrition_failed(error: str) -> None:
-    clear_terminal()
-    print(f"Failed to Add Nutrition Data: {error}")
-    time.sleep(1)
-    clear_terminal()
+    # Do not clear immediately; show consistent error prefix
+    print(f"Error: Failed to Add Nutrition Data. Details: {error}")
+    time.sleep(2)
 
 def invalid_choice() -> None:
-    clear_terminal()
-    print("Invalid Choice. Please Try Again.")
-    time.sleep(1)
-    clear_terminal()
+    # Do not clear immediately; show consistent error prefix
+    print("Error: Invalid Choice. Please Try Again.")
+    time.sleep(2)
 
 def exit_message() -> None:
     clear_terminal()

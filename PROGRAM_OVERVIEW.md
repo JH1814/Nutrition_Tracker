@@ -74,8 +74,8 @@ The program is organized pragmatically around three cooperating modules and a pe
 | Module | Responsibility Focus | Representative Functions |
 |--------|----------------------|--------------------------|
 | `main.py` | Application flow & routing | `main()` loop, statistics submenu handling |
-| `ui.py` | Terminal interaction & validation | `showMainMenu()`, `getIntInput()`, `showEntries()` |
-| `data.py` | Persistence + data logic + analytics | `checkCsvFileExists()`, `writeNutritionData()`, `getAllEntries()`, `getDailyTotals()` |
+| `ui.py` | Terminal interaction & validation | `show_main_menu()`, `get_int_input()`, `show_entries()` |
+| `data.py` | Persistence + data logic + analytics | `check_csv_file_exists()`, `write_nutrition_data()`, `get_all_entries()`, `get_daily_totals()` |
 | `data/data.csv` | Flat storage medium | (Rows appended / read) |
 
 ---
@@ -97,9 +97,9 @@ def main() -> None:
     is_running = True
     while is_running:
         # Main loop
-        data.checkCsvFileExists()
-        ui.showMainMenu()
-        choice = ui.getIntInput("Enter your Choice: ")
+        data.check_csv_file_exists()
+        ui.show_main_menu()
+        choice = ui.get_int_input("Enter your Choice: ")
         
         # Route to appropriate handler
         if choice == 1:
@@ -145,22 +145,22 @@ csv_file_path = os.path.join(os.path.dirname(__file__), "data", "data.csv")
 **Function Categories:**
 
 #### File Management
-- `checkCsvFileExists()` - Ensures data file exists
-- `createCsvFile()` - Creates new CSV with headers
-- `writeNutritionData(data)` - Appends entry to CSV
+- `check_csv_file_exists()` - Ensures data file exists
+- `create_csv_file()` - Creates new CSV with headers
+- `write_nutrition_data(data)` - Appends entry to CSV
 
 #### Data Retrieval
-- `getAllEntries()` - Returns all valid entries
-- `getEntriesByDate(date)` - Returns entries for specific date
-- `getEntriesWithinWeek()` - Returns last 7 days of entries
-- `getEntryByName(name)` - Finds entry by exact name match
+- `get_all_entries()` - Returns all valid entries
+- `get_entries_by_date(date)` - Returns entries for specific date
+- `get_entries_within_week()` - Returns last 7 days of entries
+- `get_entry_by_name(name)` - Finds entry by exact name match
 
 #### Data Quality
-- `scanCsvForCorruption()` - Counts corrupted rows
+- `scan_csv_for_corruption()` - Counts corrupted rows
 
 #### Analytics
-- `getDailyTotals()` - Sums nutrition for today
-- `getWeeklyAverages()` - Averages nutrition over week
+- `get_daily_totals()` - Sums nutrition for today
+- `get_weekly_averages()` - Averages nutrition over week
 
 ---
 
@@ -177,24 +177,24 @@ import time
 **Function Categories:**
 
 #### Display Functions
-- `showMainMenu()` - Displays main menu
-- `showStatisticsMenu()` - Displays statistics submenu
-- `showEntries(entries, message)` - Displays entry table
-- `showEntriesFailed(error)` - Shows error message
+- `show_main_menu()` - Displays main menu
+- `show_statistics_menu()` - Displays statistics submenu
+- `show_entries(entries, message)` - Displays entry table
+- `show_entries_failed(error)` - Shows error message
 
 #### Success/Failure Messages
-- `addNutritionSuccessful()` - Success confirmation
-- `addNutritionFailed(error)` - Failure notification
-- `invalidChoice()` - Invalid input warning
-- `exitMessage()` - Goodbye message
+- `add_nutrition_successful()` - Success confirmation
+- `add_nutrition_failed(error)` - Failure notification
+- `invalid_choice()` - Invalid input warning
+- `exit_message()` - Goodbye message
 
 #### Input Functions
-- `getStringInput(message)` - Validates and returns string
-- `getFloatInput(message)` - Validates and returns float
-- `getIntInput(message)` - Validates and returns integer
+- `get_string_input(message)` - Validates and returns string
+- `get_float_input(message)` - Validates and returns float
+- `get_int_input(message)` - Validates and returns integer
 
 #### Utility Functions
-- `clearTerminal()` - Clears console (cross-platform)
+- `clear_terminal()` - Clears console (cross-platform)
 
 ---
 
