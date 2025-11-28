@@ -181,7 +181,7 @@ The application persists data in a CSV file (`src/data/data.csv`). The `src/data
 - **Safe appending:** New entries written with timestamps without corrupting existing data
 - **Resilient reading:** Safely reads entries, automatically skipping corrupted rows
 - **Corruption detection:** `scan_csv_for_corruption()` reports count of invalid rows without blocking operations
-- **Comprehensive type hints:** All functions fully typed with `Optional`, `list[dict[str, str]]`, etc.
+- **Comprehensive type hints:** All functions fully typed with `list[dict[str, str]]`, etc.
 - **Detailed docstrings:** Every function documented with Args, Returns, Raises, and Notes sections
 
 **Illustrative patterns:**
