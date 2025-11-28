@@ -532,7 +532,6 @@ python3 src/main.py
 ### Libraries Used
 - `os`, `time`: UI/terminal control and pauses
 - `csv`, `datetime`: File I/O and timestamps in data layer
-- `typing`: Type hints with `Optional` for nullable return types
 
 ### Code Quality Features
 - **Validation constants**: `MAX_NAME_LENGTH = 30`, `MAX_NUMERIC_VALUE = 10000.0`
@@ -545,9 +544,9 @@ python3 src/main.py
 
 | Name        | Contribution                                    |
 |-------------|-------------------------------------------------|
-| Raji        | Feature X / Y, documentation Z                  |
-| Paulo       | Data functions, testing, refactor               |
-| Jonas       | Data functions, testing, refactor               |
+| Raji        | Documentation                                   |
+| Paulo       | UI functions, Main flow                         |
+| Jonas       | Data functions, Main flow                       |
 
 ## 📝 License
 This project is a graded group work for the programming foundation module.

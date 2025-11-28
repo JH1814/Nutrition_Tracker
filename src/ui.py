@@ -5,7 +5,7 @@ for interacting with nutrition data.
 """
 import os
 import time
-from typing import Optional
+import data
 
 # Validation constants
 MAX_NAME_LENGTH: int = 30
@@ -57,7 +57,7 @@ def show_entries(entries: list[dict[str, str | float]], message: str) -> None:
     input("\nPress Enter to continue...")
     clear_terminal()
 
-def show_stats_result(result: Optional[list[dict[str, str | float]]], title: str, empty_message: str) -> None:
+def show_stats_result(result: list[dict[str, str | float]], title: str, empty_message: str) -> None:
     """Helper to display stats and a single corruption warning.
 
     - If `result` is truthy, shows entries with `title`.
@@ -70,8 +70,6 @@ def show_stats_result(result: Optional[list[dict[str, str | float]]], title: str
         show_entries_failed(empty_message)
 
     try:
-        # Local import avoids potential circular-import issues at module load time
-        import data  # type: ignore
         corrupt_count = data.scan_csv_for_corruption()
         if corrupt_count > 0:
             show_entries_failed(f"Warning: {corrupt_count} corrupted row(s) were skipped.")
