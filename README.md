@@ -235,31 +235,35 @@ Nutrition_Tracker/
 - **`src/data/data.csv` (Storage)**: Flat append-only store of nutrition records with columns: Name, Protein, Fat, Carbs, Calories, DateTime.
 
 **Key improvements implemented:**
-- Comprehensive type hints on all functions (e.g., `Optional[list[dict[str, str | float]]]`)
+- Comprehensive type hints on all functions (e.g., `list[dict[str, str | float]]`)
+- Module-level and function-level docstrings following Google/NumPy style
+**Key improvements implemented:**
+- Comprehensive type hints on all functions (e.g., `list[dict[str, str | float]]`)
 - Module-level and function-level docstrings following Google/NumPy style
 - Validation constants for consistent input bounds
 - Enhanced error handling with standardized messaging
 - CSV best practices with newline parameter for cross-platform compatibility
 - PEP 8 compliant snake_case naming throughout
 
-**Recent refactor highlights:**
-- Centralized statistics display via `ui.show_stats_result(...)` to avoid duplicated logic
-- Simplified write path by handling file existence on-demand
-- Added comprehensive documentation and type safety
 
-**Potential future evolution:** Split `data.py` into service and repository modules, introduce domain data classes for structured entries.
-### Visualization
-### File / Module Roles 🗂️
 
-- **`main.py`**: Application entry point and flow control. Contains main loop with menu routing and exception handling. Module docstring describes purpose and architecture.
-- **`ui.py`**: Terminal interface with 12+ typed functions. Input validation with constants (`MAX_NAME_LENGTH: int = 30`, `MAX_NUMERIC_VALUE: float = 10000.0`), display functions for menus/tables/stats, standardized error messages with "Error:" prefix and 2-second visibility. All functions include comprehensive docstrings.
-- **`data.py`**: Data persistence and analytics with 10+ typed functions. CSV operations with `newline=''` parameter, retrieval functions (`get_all_entries()`, `get_entries_by_date()`), analytics functions (`get_daily_totals()`, `get_weekly_averages()`), and quality checks (`scan_csv_for_corruption()`). Returns use `Optional` types for nullable results.
+- **`main.py`**: Application entry point (now ~150 lines, was ~110 in main() alone). Clean handler functions: `handle_add_entry()`, `handle_reuse_entry()`, `handle_view_entries()`, `handle_statistics()`, `handle_exit()`. Main loop uses handler dictionary for elegant dispatch.
+- **`ui.py`**: Terminal interface with 12+ typed functions. Input validation with constants (`MAX_NAME_LENGTH: int = 30`, `MAX_NUMERIC_VALUE: float = 10000.0`), display functions for menus/tables/stats, standardized error messages with "Error:" prefix and 2-second visibility.
+- **`data.py`**: Data persistence and analytics with pure computation functions. **Pure functions** (no I/O): `compute_totals()`, `compute_averages()`. **I/O wrappers**: `get_all_entries()`, `get_entries_by_date()`, `get_daily_totals()`, `get_weekly_averages()`, `scan_csv_for_corruption()`.
 - **`data.csv`**: Flat storage with append-only rows (Name, Protein, Fat, Carbs, Calories, DateTime).
 
-**Stats display helper:**
-Call `ui.show_stats_result(data.get_daily_totals(), "Daily Total Intake", "No Entries Found for Today")` or with weekly averages to ensure consistent output and a single corruption scan.
+**Pure function benefits:**
+```python
+# Pure computation - no I/O, easier to test
+result = data.compute_totals(entries, 'Daily Total')
 
-This layout minimizes indirection while keeping responsibilities clear for a small codebase. Type hints and docstrings ensure maintainability as the project grows.
+# I/O wrapper - clean separation of concerns
+def get_daily_totals() -> list[dict] | None:
+    entries = get_entries_by_date()  # I/O
+    return compute_totals(entries, 'Daily Total')  # Pure computation
+```
+
+This layout minimizes indirection while keeping responsibilities clear. Type hints, docstrings, pure functions, and handler pattern ensure excellent maintainability.
 
 
 ### Flow (ASCII) 🔀
@@ -353,6 +357,15 @@ This layout minimizes indirection while keeping responsibilities clear for a sma
                          │NO (loop) re-enters main while
                          └──▶ CONTINUE LOOP
 ```
+
+### Simple Flow Sketch ▶️
+Start → show_main_menu() → get_int_input() →
+• If 1: get_string_input()/get_float_input() → write_nutrition_data() → add_nutrition_successful()
+• If 2: get_string_input() → get_entry_by_name() → write_nutrition_data() → add_nutrition_successful()
+• If 3: get_all_entries() → show_stats_result()
+• If 4: show_statistics_menu() → get_int_input() → get_daily_totals()/get_weekly_averages() → show_stats_result()
+• If 5: exit_message() → End
+
 
 ### Flowchart 🗺️
 

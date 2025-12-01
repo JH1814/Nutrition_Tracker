@@ -163,31 +163,30 @@ def check_csv_file_exists() -> None:
         except FileNotFoundError:
             create_csv_file()
 
-#statistics functions
-def get_daily_totals() -> list[dict[str, str | float]]:
-    """Calculate daily totals for Protein, Fat, Carbs, Calories.
+#statistics functions - Pure computation helpers
+def compute_totals(entries: list[dict[str, str]], label: str = 'Total') -> list[dict[str, str | float]] | None:
+    """Pure function to compute nutrition totals from entries.
     
-    Sums all nutrition values for the current day.
+    Does not perform any I/O - just computation on provided data.
+    
+    Args:
+        entries: List of entry dictionaries with Protein, Fat, Carbs, Calories
+        label: Label for the result row (default: 'Total')
     
     Returns:
-        Single-item list with totals, or None if no entries found
+        Single-item list with totals, or None if entries is empty
         
     Note:
-        Gracefully handles malformed entries by skipping them
+        Easier to test and reuse. Skips malformed numeric values gracefully.
     """
-
-    entries = get_entries_by_date()
-
     if not entries:
         return None
 
-    # Initialize totals
     total_protein = 0.0
     total_fat = 0.0
     total_carbs = 0.0
     total_calories = 0.0
 
-    # Sum all values
     for entry in entries:
         try:
             total_protein += float(entry.get('Protein', 0))
@@ -195,39 +194,39 @@ def get_daily_totals() -> list[dict[str, str | float]]:
             total_carbs += float(entry.get('Carbs', 0))
             total_calories += float(entry.get('Calories', 0))
         except ValueError:
-            pass  # Skip malformed entries
+            continue  # Skip malformed entries
 
     return [{
-        'Name': 'Daily Total',
-        'Protein': round(total_protein, 2), 
-        'Fat': round(total_fat, 2), 
-        'Carbs': round(total_carbs, 2), 
+        'Name': label,
+        'Protein': round(total_protein, 2),
+        'Fat': round(total_fat, 2),
+        'Carbs': round(total_carbs, 2),
         'Calories': round(total_calories, 2)
-        }]
+    }]
 
-def get_weekly_averages() -> list[dict[str, str | float]]:
-    """Calculate weekly averages for Protein, Fat, Carbs, Calories.
+def compute_averages(entries: list[dict[str, str]], label: str = 'Average') -> list[dict[str, str | float]] | None:
+    """Pure function to compute nutrition averages from entries.
     
-    Averages all nutrition values from entries within the last 7 days.
+    Does not perform any I/O - just computation on provided data.
+    
+    Args:
+        entries: List of entry dictionaries with Protein, Fat, Carbs, Calories
+        label: Label for the result row (default: 'Average')
     
     Returns:
-        Single-item list with averages, or None if no entries found
+        Single-item list with averages, or None if entries is empty
         
     Note:
-        Gracefully handles malformed entries by skipping them
+        Easier to test and reuse. Skips malformed numeric values gracefully.
     """
-    entries = get_entries_within_week()
-
     if not entries:
         return None
 
-    # Initialize totals
     total_protein = 0.0
     total_fat = 0.0
     total_carbs = 0.0
     total_calories = 0.0
 
-    # Sum all values
     for entry in entries:
         try:
             total_protein += float(entry.get('Protein', 0))
@@ -235,14 +234,32 @@ def get_weekly_averages() -> list[dict[str, str | float]]:
             total_carbs += float(entry.get('Carbs', 0))
             total_calories += float(entry.get('Calories', 0))
         except ValueError:
-            pass  # Skip malformed entries
-    
-    # Calculate averages
+            continue  # Skip malformed entries
+
     count = len(entries)
     return [{
-        'Name': 'Weekly Average',
+        'Name': label,
         'Protein': round(total_protein / count, 2),
         'Fat': round(total_fat / count, 2),
         'Carbs': round(total_carbs / count, 2),
         'Calories': round(total_calories / count, 2)
     }]
+
+# I/O wrapper functions
+def get_daily_totals() -> list[dict[str, str | float]] | None:
+    """Calculate daily totals for Protein, Fat, Carbs, Calories.
+    
+    Returns:
+        Single-item list with totals, or None if no entries found
+    """
+    entries = get_entries_by_date()
+    return compute_totals(entries, 'Daily Total')
+
+def get_weekly_averages() -> list[dict[str, str | float]] | None:
+    """Calculate weekly averages for Protein, Fat, Carbs, Calories.
+    
+    Returns:
+        Single-item list with averages, or None if no entries found
+    """
+    entries = get_entries_within_week()
+    return compute_averages(entries, 'Weekly Average')
