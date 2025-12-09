@@ -34,10 +34,10 @@ def handle_reuse_entry() -> None:
     Searches for entry by name and creates a new timestamped copy.
     """
     ui.clear_terminal()
-    recipe = ui.get_string_input("Enter the Name of the Recipe to use from the Nutrition Entries List: ")
+    name = ui.get_string_input("Enter the Name of the Recipe to use from the Nutrition Entries List: ")
     
     try:
-        entry = data.get_entry_by_name(recipe)
+        entry = data.get_entry_by_name(name)
     except FileNotFoundError as e:
         data.create_csv_file()
         ui.add_nutrition_failed(e)
@@ -49,14 +49,14 @@ def handle_reuse_entry() -> None:
     # Only proceed if entry was found
     if entry:
         try:
-            data.write_nutrition_data((
+            data.write_nutrition_data([
                 entry[0]["Name"], 
                 entry[0]["Protein"], 
                 entry[0]["Fat"], 
                 entry[0]["Carbs"], 
                 entry[0]["Calories"], 
                 datetime.datetime.now()
-            ))
+            ])
             ui.add_nutrition_successful()
         except FileNotFoundError as e:
             data.create_csv_file()
@@ -73,12 +73,12 @@ def handle_view_entries() -> None:
     ui.clear_terminal()
     try:
         entries = data.get_all_entries()
-        ui.show_stats_result(entries, "Nutrition Entries:", "No Entries Found.")
+        ui.show_entries(entries, "Nutrition Entries:", "No Entries Found.")
     except FileNotFoundError as e:
         data.create_csv_file()
-        ui.show_entries_failed(e)
+        ui.format_entries_failed(e)
     except IndexError as e:
-        ui.show_entries_failed(e)
+        ui.format_entries_failed(e)
 
 
 def handle_statistics() -> None:
@@ -96,11 +96,11 @@ def handle_statistics() -> None:
         try:
             if stats_choice == 1:
                 totals = data.get_daily_totals()
-                ui.show_stats_result(totals, "Daily Total Intake", "No Entries Found for Today")
+                ui.show_entries(totals, "Daily Total Intake", "No Entries Found for Today")
                 stats_running = False
             elif stats_choice == 2:
                 averages = data.get_weekly_averages()
-                ui.show_stats_result(averages, "Weekly Average Intake", "No Entries Found for this Week")
+                ui.show_entries(averages, "Weekly Average Intake", "No Entries Found for this Week")
                 stats_running = False
             elif stats_choice == 3:
                 ui.clear_terminal()
@@ -110,13 +110,13 @@ def handle_statistics() -> None:
 
         except FileNotFoundError as e:
             data.create_csv_file()
-            ui.show_entries_failed(e)
+            ui.format_entries_failed(e)
             stats_running = False
         except IOError as e:
-            ui.show_entries_failed(e)
+            ui.format_entries_failed(e)
             stats_running = False
         except ValueError as e:
-            ui.show_entries_failed(e)
+            ui.format_entries_failed(e)
             stats_running = False
 
 
@@ -156,7 +156,6 @@ def main() -> None:
             handlers[choice]()
         else:
             ui.invalid_choice()
-
 
 if __name__ == "__main__":
     main()
