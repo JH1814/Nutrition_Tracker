@@ -167,7 +167,7 @@ def get_int_input(message: str) -> int:
 	```
 - **File system resilience:** Missing CSV files are automatically recreated with proper headers via `create_csv_file()`
 - **Corruption detection:** `data.scan_csv_for_corruption()` scans the entire file and reports the count of invalid rows without blocking operations
-- **Robust statistics display:** `ui.show_stats_result(...)` centralizes display and performs a single corruption scan with consistent messaging
+- **Robust statistics display:** `ui.show_entries(...)` centralizes display and performs a single corruption scan with consistent messaging
 - **Standardized error messages:** All error messages use consistent "Error:" prefix and remain visible for 2 seconds for better user experience
 
 
@@ -227,7 +227,6 @@ Nutrition_Tracker/
 │       └── data.csv                # Persistent nutrition entries (CSV)
 └── .git/                           # Git metadata
 ```
-
 ### Architecture Overview 🧱
 - **`main.py` (Flow Coordinator)**: Application entry point with module docstring. Runs the main loop, interprets user choices, dispatches operations to ui and data modules. Includes exception handling for each menu choice.
 - **`ui.py` (Presentation / Interaction)**: Terminal interface with comprehensive type hints. Renders menus & tables, performs input validation with upper bounds (`MAX_NAME_LENGTH = 30`, `MAX_NUMERIC_VALUE = 10000.0`). All functions fully documented with Args/Returns/Note sections. Implements standardized error messages with "Error:" prefix and 2-second visibility.
@@ -244,8 +243,6 @@ Nutrition_Tracker/
 - Enhanced error handling with standardized messaging
 - CSV best practices with newline parameter for cross-platform compatibility
 - PEP 8 compliant snake_case naming throughout
-
-
 
 - **`main.py`**: Application entry point (now ~150 lines, was ~110 in main() alone). Clean handler functions: `handle_add_entry()`, `handle_reuse_entry()`, `handle_view_entries()`, `handle_statistics()`, `handle_exit()`. Main loop uses handler dictionary for elegant dispatch.
 - **`ui.py`**: Terminal interface with 12+ typed functions. Input validation with constants (`MAX_NAME_LENGTH: int = 30`, `MAX_NUMERIC_VALUE: float = 10000.0`), display functions for menus/tables/stats, standardized error messages with "Error:" prefix and 2-second visibility.
@@ -264,7 +261,6 @@ def get_daily_totals() -> list[dict] | None:
 ```
 
 This layout minimizes indirection while keeping responsibilities clear. Type hints, docstrings, pure functions, and handler pattern ensure excellent maintainability.
-
 
 ### Flow (ASCII) 🔀
 ```
@@ -316,7 +312,7 @@ This layout minimizes indirection while keeping responsibilities clear. Type hin
      │         │   ┌──────────────────────────────────────────────────────────────────────────┐  │
      │         │   │ ui.clear_terminal()                                                       │  │
      │         │   │ entries = data.get_all_entries()                                          │  │
-     │         │   │ ui.show_stats_result(entries, "Nutrition Entries:", "No Entries Found.")  │  │
+     │         │   │ ui.show_entries(entries, "Nutrition Entries:", "No Entries Found.")  │  │
      │         │   └──────────────────────────────────────────────────────────────────────────┘  │
      │         │                                                                                 │
      │         │ Choice == 4 (Statistics Submenu)                                                │
@@ -327,11 +323,11 @@ This layout minimizes indirection while keeping responsibilities clear. Type hin
      │         │   │   stats_choice = ui.get_int_input()                                       │  │
      │         │   │   IF 1 (Daily Totals):                                                    │  │
      │         │   │     totals = data.get_daily_totals()                                      │  │
-     │         │   │     ui.show_stats_result(totals, "Daily Total", "No Entries for Today")   │  │
+     │         │   │     ui.show_entries(totals, "Daily Total", "No Entries for Today")   │  │
      │         │   │     stats_running = False                                                 │  │
      │         │   │   IF 2 (Weekly Averages):                                                 │  │
      │         │   │     averages = data.get_weekly_averages()                                 │  │
-     │         │   │     ui.show_stats_result(averages, "Weekly Avg", "No Entries this Week")  │  │
+     │         │   │     ui.show_entries(averages, "Weekly Avg", "No Entries this Week")  │  │
      │         │   │     stats_running = False                                                 │  │
      │         │   │   IF 3 (Back): stats_running = False                                      │  │
      │         │   └──────────────────────────────────────────────────────────────────────────┘  │
@@ -362,8 +358,8 @@ This layout minimizes indirection while keeping responsibilities clear. Type hin
 Start → show_main_menu() → get_int_input() →
 • If 1: get_string_input()/get_float_input() → write_nutrition_data() → add_nutrition_successful()
 • If 2: get_string_input() → get_entry_by_name() → write_nutrition_data() → add_nutrition_successful()
-• If 3: get_all_entries() → show_stats_result()
-• If 4: show_statistics_menu() → get_int_input() → get_daily_totals()/get_weekly_averages() → show_stats_result()
+• If 3: get_all_entries() → show_entries()
+• If 4: show_statistics_menu() → get_int_input() → get_daily_totals()/get_weekly_averages() → show_entries()
 • If 5: exit_message() → End
 
 
@@ -534,6 +530,8 @@ Enjoy tracking your meals and managing your daily calories with the **Nutrition 
 - **Type hints**: Comprehensive typing throughout with `Optional`, `list[dict[str, str | float]]`, etc.
 - **Docstrings**: Module and function-level documentation following Google/NumPy style
 - **PEP 8 compliance**: snake_case naming conventions throughout
+- **Pure functions**: Computation separated from I/O for testability (`compute_totals`, `compute_averages`)
+- **Handler pattern**: Menu dispatch via dictionary routing (src/main.py)
 
 ### How to Run
 From the project root:
@@ -552,12 +550,14 @@ python3 src/main.py
 - **CSV best practices**: Proper `newline=''` parameter on all file operations
 - **Comprehensive type hints**: All function parameters and returns typed
 - **Detailed docstrings**: Every function documented with purpose, arguments, returns, and notes
+- **Handler pattern**: 6 focused functions replacing monolithic main() (110 → ~163 lines with improved readability)
+- **Pure functions**: Separated computation from I/O (compute_totals, compute_averages) for 100% testability
 
 ## 👥 Team & Contributions
 
 | Name        | Contribution                                    |
 |-------------|-------------------------------------------------|
-| Raji        | Documentation                                   |
+| Raji        | Documentation, Main flow                        |
 | Paulo       | UI functions, Main flow                         |
 | Jonas       | Data functions, Main flow                       |
 
