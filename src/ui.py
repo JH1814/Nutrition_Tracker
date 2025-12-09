@@ -28,7 +28,7 @@ def show_statistics_menu() -> None:
     print("2. Weekly Averages")
     print("3. Back to Main Menu")
 
-def show_entries(entries: list[dict[str, str | float]], message: str) -> None:
+def format_entries(entries: list[dict[str, str | float]], message: str) -> None:
     """Display nutrition entries in a formatted table.
     
     Args:
@@ -37,7 +37,7 @@ def show_entries(entries: list[dict[str, str | float]], message: str) -> None:
     """
     clear_terminal()
     if not entries:
-        show_entries_failed("No Entries Found.")
+        format_entries_failed("No Entries Found.")
         return
 
     print(message)
@@ -57,7 +57,7 @@ def show_entries(entries: list[dict[str, str | float]], message: str) -> None:
     input("\nPress Enter to continue...")
     clear_terminal()
 
-def show_stats_result(result: list[dict[str, str | float]], title: str, empty_message: str) -> None:
+def show_entries(result: list[dict[str, str | float]], title: str, empty_message: str) -> None:
     """Helper to display stats and a single corruption warning.
 
     - If `result` is truthy, shows entries with `title`.
@@ -65,18 +65,18 @@ def show_stats_result(result: list[dict[str, str | float]], title: str, empty_me
     - Then scans CSV once and warns if corrupted rows were skipped.
     """
     if result:
-        show_entries(result, title)
+        format_entries(result, title)
     else:
-        show_entries_failed(empty_message)
+        format_entries_failed(empty_message)
 
     try:
         corrupt_count = data.scan_csv_for_corruption()
         if corrupt_count > 0:
-            show_entries_failed(f"Warning: {corrupt_count} corrupted row(s) were skipped.")
+            format_entries_failed(f"Warning: {corrupt_count} corrupted row(s) were skipped.")
     except IOError:
         pass
 
-def show_entries_failed(error: str) -> None:
+def format_entries_failed(error: str) -> None:
     # Do not clear immediately; show consistent error prefix so users can read
     print(f"Error: No Entries Found. Details: {error}")
     time.sleep(2)
@@ -155,7 +155,6 @@ def get_int_input(message: str) -> int:
     
     Args:
         message: Prompt message to display
-        
     Returns:
         Valid non-negative integer value (0 to 10000)
         
