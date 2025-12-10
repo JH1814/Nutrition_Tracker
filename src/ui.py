@@ -150,6 +150,27 @@ def get_float_input(message: str) -> float:
             print(f"Invalid Input. Please Enter a Valid Number. {e}")
     return number
 
+def get_int_new(msg:str, err_msg:str, min_val:int=None, max_val:int=None) -> int:
+    """Get validated integer input from user within a specified range.
+    
+    Args:
+        msg: Prompt message to display
+        err_msg: Error message to display on invalid input
+        min_val: Minimum acceptable integer value
+        max_val: Maximum acceptable integer value
+    """
+    user_in = input(msg)
+    try:
+        user_int = int(user_in)
+        if (min_val is not None and user_int < min_val) or (max_val is not None and user_int > max_val):
+            raise ValueError(f"Input Out of Range. ({min_val})")
+        return user_int
+    except ValueError:
+        print(err_msg)
+        return get_int_new(msg, err_msg, min_val, max_val)
+
+        
+
 def get_int_input(message: str) -> int:
     """Get validated integer input from user.
     
