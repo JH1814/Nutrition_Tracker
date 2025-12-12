@@ -1,21 +1,13 @@
 # 🍎 Nutrition Tracker
 
-## About This Project
-This project is intended to:
-- Practice the complete process from problem analysis to implementation
-- Apply basic Python programming concepts (console I/O, control flow, functions, modules)
-- Demonstrate console interaction, data validation, and file processing
-- Produce clean, well-structured, and documented code suitable for future teamwork
-- Encourage frequent, incremental commits to track progress
-
 ## 📝 Analysis
 
 ### Problem
-Many people track their daily nutrition manually using notes or spreadsheets, which often leads to **input errors, missing data**, and **no automatic** daily summaries.
+Many people **track** their daily **nutrition** manually using notes or spreadsheets, which often leads to **input errors, missing data**, and **no automatic** daily summaries.
 A console-based tracker can simplify this process by storing entries in a structured format and generating quick overviews.
 
 ### Scenario 🧭
-A user opens the program daily to record food items they’ve eaten — including date, category (e.g., protein, fat, carbs, sugar), and amount.
+A user opens the program daily to record food items they’ve eaten including date, category (e.g., protein, fat, carbs, sugar), and amount.
 The program validates the inputs, saves them into a file, and allows users to view summaries like total calories or nutrients per day or week.
 
 ### User Stories 📘
@@ -27,13 +19,13 @@ The program validates the inputs, saves them into a file, and allows users to vi
 
 4.	As a user, I want my data to be **saved and loaded automatically**, so I don’t lose progress.
 
-5.	As a user, I want to be notified when I enter **invalid data** (e.g., wrong date or negative amount).
+5.	As a user, I want to **be notified** when I enter **invalid data** (e.g., wrong date or negative amount) so data is stored correctly.
 
 ### Use Cases 🔧
 * **Add Entry:** User inputs a new nutrition record.
 * **List Entries:** Display all or filtered records.
 * **Show Statistics:** Calculate and display daily or weekly totals.
-* **Save / Load Entries:** Store and retrieve entries from a file (.json or .csv).
+* **Save / Load Entries:** Store and retrieve entries from a csv file.
 * **Exit:** Safely quit the program.
 
 ## Project Requirements ✅
@@ -215,17 +207,12 @@ Project layout (excluding the `testing` folder):
 ```
 Nutrition_Tracker/
 ├── README.md                       # Project overview & user guide
-├── PROGRAM_OVERVIEW.md             # Detailed architecture & feature docs
-├── VALIDATION_DOCUMENTATION.md     # Validation logic explanations
-├── FILE_PROCESSING_DOCUMENTATION.md# File I/O process details
-├── USER_MANUAL.md                  # End-user manual
 ├── src/                            # Source code
 │   ├── main.py                     # Entry point & main loop routing
 │   ├── ui.py                       # Terminal UI & input validation
 │   ├── data.py                     # Persistence + lookups + analytics
 │   └── data/                       # Data storage directory
 │       └── data.csv                # Persistent nutrition entries (CSV)
-└── .git/                           # Git metadata
 ```
 ### Architecture Overview 🧱
 - **`main.py` (Flow Coordinator)**: Application entry point with module docstring. Runs the main loop, interprets user choices, dispatches operations to ui and data modules. Includes exception handling for each menu choice.
@@ -560,6 +547,14 @@ python3 src/main.py
 | Raji        | Documentation, Main flow                        |
 | Paulo       | UI functions, Main flow                         |
 | Jonas       | Data functions, Main flow                       |
+
+## About This Project
+This project is intended to:
+- Practice the complete process from problem analysis to implementation
+- Apply basic Python programming concepts (console I/O, control flow, functions, modules)
+- Demonstrate console interaction, data validation, and file processing
+- Produce clean, well-structured, and documented code suitable for future teamwork
+- Encourage frequent, incremental commits to track progress
 
 ## 📝 License
 This project is a graded group work for the programming foundation module.
