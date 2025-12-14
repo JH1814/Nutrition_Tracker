@@ -274,7 +274,7 @@ This layout minimizes indirection while keeping responsibilities clear. Type hin
      │       │   └──────────────────────────────────────────────────────────────────────────┘   │
      │       │                                                                                  │
      │       │ Choice == 2 (Reuse Existing Entry)                                               │
-     │       │   ┌────────────────────────────────────────────────────────────────────────── ┐  │
+     │       │   ┌──────────────────────────────────────────────────────────────────────────-┐  │
      │       │   │ ui.clear_terminal()                                                       │  │
      │       │   │ recipe = ui.get_string_input()                                            │  │
      │       │   │ entry = data.get_entry_by_name(recipe)                                    │  │
@@ -282,7 +282,7 @@ This layout minimizes indirection while keeping responsibilities clear. Type hin
      │       │   │   data.write_nutrition_data(copy + new timestamp)                         │  │
      │       │   │   ui.add_nutrition_successful()                                           │  │
      │       │   │ ELSE: ui.add_nutrition_failed("Recipe Not Found")                         │  │
-     │       │   └────────────────────────────────────────────────────────────────────────── ┘  │
+     │       │   └──────────────────────────────────────────────────────────────────────────–┘  │
      │       │                                                                                  │
      │       │ Choice == 3 (View Entries)                                                       │
      │       │   ┌──────────────────────────────────────────────────────────────────────────┐   │
@@ -292,7 +292,7 @@ This layout minimizes indirection while keeping responsibilities clear. Type hin
      │       │   └──────────────────────────────────────────────────────────────────────────┘   │
      │       │                                                                                  │
      │       │ Choice == 4 (Statistics Submenu)                                                 │
-     │       │   ┌───────────────────────────────────────────────────────────────────────── ─┐  │
+     │       │   ┌─────────────────────────────────────────────────────────────────────────-─┐  │
      │       │   │ stats_running = True                                                      │  │
      │       │   │ WHILE stats_running:                                                      │  │
      │       │   │   ui.show_statistics_menu()                                               │  │
@@ -371,7 +371,7 @@ The following section explains step-by-step how to use the **Nutrition Tracker**
 
 ---
 
-### 1️. Start the Program 🚀
+### ️1. Start the Program 🚀
 
 When you start the program, the **main menu** will appear in your terminal.
 
@@ -390,7 +390,7 @@ Welcome to Nutrition Tracker!
 
 ---
 
-### 2️. Add a New Food Entry ➕
+### 2. Add a New Food Entry ➕
 
 Select option **1** from the main menu.  
 The program will ask you to enter information about your meal.
@@ -411,7 +411,7 @@ Note: The app automatically records the current timestamp; no date entry is requ
 
 ---
 
-### 3️. View All Entries 📋
+### ️3. View All Entries 📋
 
 Select option **2** from the main menu.  
 This will display all entries currently saved in the system.
@@ -427,7 +427,7 @@ Protein Shake – 250 kcal
 
 ---
 
-### 4️. View Entries from the Current Week 🗓️
+### 4. View Entries from the Current Week 🗓️
 
 Select option **3** from the main menu.  
 This will show all entries recorded **within the last 7 days** and also calculate the **total calories of the week**.
@@ -445,7 +445,7 @@ Total calories this week: 1850 kcal
 
 ---
 
-### 5️. Show Statistics 📊
+### 5. Show Statistics 📊
 
 Select option **4** from the main menu.  
 A submenu will appear with three statistical options:
@@ -511,7 +511,7 @@ Returns to the main menu without generating any statistics.
 
 ---
 
-### 6️. Exit the Program 🚪
+### 6. Exit the Program 🚪
 
 Select option **5** to close the program.  
 All your data will be saved automatically before the application exits.
