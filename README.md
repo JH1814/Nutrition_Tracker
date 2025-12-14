@@ -57,7 +57,7 @@ MAX_NUMERIC_VALUE: float = 10000.0  # Reasonable upper limit for nutrition value
 **Input Validation Functions with Full Type Hints**:
 
 ```python
-def get_string_input(message: str) -> str:
+def get_string_input(message: str, max_length: int = MAX_NAME_LENGTH) -> str:
     """Get validated string input from user.
     
     Args:
@@ -68,13 +68,13 @@ def get_string_input(message: str) -> str:
         
     Note:
         Loops until valid input is provided
-    """
+    """  
     is_valid = False
     while not is_valid:
-        try:
+        try: 
             string = input(message)
-            if not string or string.isdigit() or len(string) > MAX_NAME_LENGTH:
-                raise ValueError(f"Input Cannot be Empty, a Number, or Longer than {MAX_NAME_LENGTH} Characters.")
+            if not string or string.isdigit() or len(string) > max_length:
+                raise ValueError(f"Input Cannot be Empty, a Number, or Longer than {max_length} Characters.")
             is_valid = True
         except ValueError as e:
             print(f"Invalid Input. Please Enter a Valid String. {e}")
@@ -82,7 +82,7 @@ def get_string_input(message: str) -> str:
 ```
 
 ```python
-def get_float_input(message: str) -> float:
+def get_float_input(message: str, max_value: float = MAX_NUMERIC_VALUE) -> float:
     """Get validated float input from user.
     
     Args:
@@ -96,12 +96,12 @@ def get_float_input(message: str) -> float:
     """
     is_valid = False
     while not is_valid:
-        try:
+        try: 
             number = float(input(message))
             if number < 0:
                 raise ValueError("Input Cannot be Negative.")
-            if number > MAX_NUMERIC_VALUE:
-                raise ValueError(f"Input Cannot Exceed {MAX_NUMERIC_VALUE}.")
+            if number > max_value:
+                raise ValueError(f"Input Cannot Exceed {max_value}.")
             is_valid = True
         except ValueError as e:
             print(f"Invalid Input. Please Enter a Valid Number. {e}")
@@ -109,12 +109,11 @@ def get_float_input(message: str) -> float:
 ```
 
 ```python
-def get_int_input(message: str) -> int:
+def get_int_input(message: str, max_value: int = MAX_NUMERIC_VALUE) -> int:
     """Get validated integer input from user.
     
     Args:
         message: Prompt message to display
-        
     Returns:
         Valid non-negative integer value (0 to 10000)
         
@@ -123,12 +122,12 @@ def get_int_input(message: str) -> int:
     """
     is_valid = False
     while not is_valid:
-        try:
+        try: 
             integer = int(input(message))
             if integer < 0:
                 raise ValueError("Input Cannot be Negative.")
-            if integer > MAX_NUMERIC_VALUE:
-                raise ValueError(f"Input Cannot Exceed {int(MAX_NUMERIC_VALUE)}.")
+            if integer > max_value:
+                raise ValueError(f"Input Cannot Exceed {int(max_value)}.")
             is_valid = True
         except ValueError as e:
             print(f"Invalid Input. Please Enter a Valid Integer. {e}")
@@ -202,7 +201,7 @@ with open(csv_file_path, 'r', newline='') as f:
 
 ## Filestructure 📂
 
-Project layout (excluding the `testing` folder):
+Project layout:
 
 ```
 Nutrition_Tracker/
@@ -219,12 +218,13 @@ Nutrition_Tracker/
 ### Architecture Overview 🧱
 - **`main.py` (Flow Coordinator)**: Application entry point with module docstring. Runs the main loop, interprets user choices, dispatches operations to ui and data modules. Includes exception handling for each menu choice.
 - **`ui.py` (Presentation / Interaction)**: Terminal interface with comprehensive type hints. Renders menus & tables, performs input validation with upper bounds (`MAX_NAME_LENGTH = 30`, `MAX_NUMERIC_VALUE = 10000.0`). All functions fully documented with Args/Returns/Note sections. Implements standardized error messages with "Error:" prefix and 2-second visibility.
-- **`data.py` (Data & Analytics)**: Persistence layer with full type hints including `Optional` imports. Handles CSV operations with `newline=''` parameter, entry queries, daily/weekly analytics, and corruption scanning. All functions documented with comprehensive docstrings.
+- **`data.py` (Data & Analytics)**: Persistence layer with full type hints. Handles CSV operations with `newline=''` parameter, entry queries, daily/weekly analytics, and corruption scanning. All functions documented with comprehensive docstrings.
 - **`src/data/data.csv` (Storage)**: Flat append-only store of nutrition records with columns: Name, Protein, Fat, Carbs, Calories, DateTime.
 - **`main.py`**: Application entry point (now ~150 lines, was ~110 in main() alone). Clean handler functions: `handle_add_entry()`, `handle_reuse_entry()`, `handle_view_entries()`, `handle_statistics()`, `handle_exit()`. Main loop uses handler dictionary for elegant dispatch.
 - **`ui.py`**: Terminal interface with 12+ typed functions. Input validation with constants (`MAX_NAME_LENGTH: int = 30`, `MAX_NUMERIC_VALUE: float = 10000.0`), display functions for menus/tables/stats, standardized error messages with "Error:" prefix and 2-second visibility.
 - **`data.py`**: Data persistence and analytics with pure computation functions. **Pure functions** (no I/O): `compute_totals()`, `compute_averages()`. **I/O wrappers**: `get_all_entries()`, `get_entries_by_date()`, `get_daily_totals()`, `get_weekly_averages()`, `scan_csv_for_corruption()`.
 - **`data.csv`**: Flat storage with append-only rows (Name, Protein, Fat, Carbs, Calories, DateTime).
+- **`visualization.ipynb`**: Visualizing Calories, Protein, Fat and Carb with a graph which is stored in the graph folder by calling the `create_nutrition_graph()` function inside the `main.py` file.
 
 **Pure function benefits:**
 ```python
@@ -510,20 +510,20 @@ Goodbye!
 
 | Option | Description |
 |:--:|:--|
-| 1 | Add a new food entry |
+| 1 | Add a new food entry            |
 | 2 | Reuse an existing entry by name |
-| 3 | View all entries |
-| 4 | View statistics (submenu) |
-| 5 | Exit the program |
+| 3 | View all entries                |
+| 4 | View statistics (submenu)       |
+| 5 | Exit the program                |
 
 ### Summary of Menu Options (Statistics Submenu)
 
 | Option | Description |
 |:--:|:--|
-| 1 | Show daily totals for today |
-| 2 | Show weekly average intake |
+| 1 | Show daily totals for today            |
+| 2 | Show weekly average intake             |
 | 3 | Create nutrition graph for last 7 days |
-| 4 | Back to main menu |
+| 4 | Back to main menu                      |
 
 ---
 
@@ -537,7 +537,7 @@ Goodbye!
 - **Upper bounds protection**: System prevents unrealistic values (e.g., 50,000 calories) by capping inputs at 10,000.
 - **CSV format**: Data stored with proper `newline=''` parameter for cross-platform compatibility.
 - **Documentation**: All functions include comprehensive docstrings with Args/Returns/Note sections.
-- **Graph generation**: Requires `pandas` and `matplotlib`. Run `pip install -r requirements.txt` to install.
+- **Graph generation**: Requires `pandas`, `matplotlib` and `import-ipynb`. Run `pip install -r requirements.txt` to install.
 - **Visual data analysis**: Use the graph feature to identify eating patterns and nutrition trends.
 
 ---
@@ -548,7 +548,7 @@ Enjoy tracking your meals and managing your daily calories with the **Nutrition 
 
 ### Technology
 - **Python 3.x**: Standard library only for core app, plus `pandas` and `matplotlib` for visualization
-- **Type hints**: Comprehensive typing throughout with `Optional`, `list[dict[str, str | float]]`, etc.
+- **Type hints**: Comprehensive typing throughout with `list[dict[str, str | float]]`, etc.
 - **Docstrings**: Module and function-level documentation following Google/NumPy style
 - **PEP 8 compliance**: snake_case naming conventions throughout
 - **Pure functions**: Computation separated from I/O for testability (`compute_totals`, `compute_averages`)
@@ -564,6 +564,7 @@ pip install -r requirements.txt
 This installs:
 - `pandas`: Data processing and manipulation (used in visualization)
 - `matplotlib`: Graph and visualization generation
+- `import-ipynb`: .ipynb file execution inside .py file 
 
 **2. Run the Application**
 ```bash
@@ -595,12 +596,12 @@ src/
 
 **Module Responsibilities:**
 
-| Module | Responsibility | Key Functions |
+| Module                | Responsibility                           | Key Functions                                                           |
 |:---|:---|:---|
-| `main.py` | Application orchestration & user routing | `main()`, `handle_add_entry()`, `handle_statistics()` |
-| `ui.py` | Terminal interface & input validation | `get_string_input()`, `show_main_menu()`, `show_entries()` |
-| `data.py` | CSV persistence & analytics | `write_nutrition_data()`, `get_daily_totals()`, `get_weekly_averages()` |
-| `visualization.ipynb` | Graph generation | `create_nutrition_graph()` |
+| `main.py`             | Application orchestration & user routing | `main()`, `handle_add_entry()`, `handle_statistics()`                   |
+| `ui.py`               | Terminal interface & input validation    | `get_string_input()`, `show_main_menu()`, `show_entries()`              |
+| `data.py`             | CSV persistence & analytics              | `write_nutrition_data()`, `get_daily_totals()`, `get_weekly_averages()` |
+| `visualization.ipynb` | Graph generation                         | `create_nutrition_graph()`                                              |
 
 ### Importing the Visualization Module
 
@@ -623,6 +624,7 @@ visualization.create_nutrition_graph()
 ```
 pandas>=1.5.0
 matplotlib>=3.5.0
+import-ipynb>=0.1.4
 ```
 
 **Install all dependencies:**

@@ -6,9 +6,7 @@ Each handler function manages a specific user operation (add, view, statistics, 
 import data
 import ui
 import datetime
-import import_ipynb
 import visualization
-
 
 def handle_add_entry() -> None:
     """Handle menu choice 1: Add a new nutrition entry.
@@ -28,7 +26,6 @@ def handle_add_entry() -> None:
     except FileNotFoundError as e:
         data.create_csv_file()
         ui.add_nutrition_failed(e)
-
 
 def handle_reuse_entry() -> None:
     """Handle menu choice 2: Reuse an existing nutrition entry.
