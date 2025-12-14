@@ -211,7 +211,8 @@ Nutrition_Tracker/
 │   ├── main.py                     # Entry point & main loop routing
 │   ├── ui.py                       # Terminal UI & input validation
 │   ├── data.py                     # Persistence + lookups + analytics
-|   |–– visualization.ipynb         # Create graphs based on entries from the data.csv file
+│   ├── visualization.py            # Graph generation for 7-day nutrition data
+│   ├── visualization.ipynb         # Reference notebook for interactive exploration
 │   └── data/                       # Data storage directory
 │       └── data.csv                # Persistent nutrition entries (CSV)
 ```
@@ -219,12 +220,15 @@ Nutrition_Tracker/
 - **`main.py` (Flow Coordinator)**: Application entry point with module docstring. Runs the main loop, interprets user choices, dispatches operations to ui and data modules. Includes exception handling for each menu choice.
 - **`ui.py` (Presentation / Interaction)**: Terminal interface with comprehensive type hints. Renders menus & tables, performs input validation with upper bounds (`MAX_NAME_LENGTH = 30`, `MAX_NUMERIC_VALUE = 10000.0`). All functions fully documented with Args/Returns/Note sections. Implements standardized error messages with "Error:" prefix and 2-second visibility.
 - **`data.py` (Data & Analytics)**: Persistence layer with full type hints. Handles CSV operations with `newline=''` parameter, entry queries, daily/weekly analytics, and corruption scanning. All functions documented with comprehensive docstrings.
-- **`src/data/data.csv` (Storage)**: Flat append-only store of nutrition records with columns: Name, Protein, Fat, Carbs, Calories, DateTime.
-- **`main.py`**: Application entry point (now ~150 lines, was ~110 in main() alone). Clean handler functions: `handle_add_entry()`, `handle_reuse_entry()`, `handle_view_entries()`, `handle_statistics()`, `handle_exit()`. Main loop uses handler dictionary for elegant dispatch.
+- **`visualization.py` (Graph Generation)**: Module for creating and saving nutrition graphs. The `create_nutrition_graph()` function fetches 7-day data, processes it with pandas, and generates a bar chart showing daily macronutrient intake. Saves output to `graphs/graph.png` with error handling for missing data.
+- **`visualization.ipynb`**: Reference Jupyter notebook for interactive exploration and testing of visualization code. Maintained alongside `.py` file for reference.
+- **`src/data/data.csv` (Storage)**: Flat append-only store of nutrition records with columns: Name, Protein, Fat, Carbs, Calories, DateTime. Includes sample test data for immediate feature testing.
+- **`graphs/` (Output Directory)**: Stores generated nutrition graphs (e.g., `graph.png`) for 7-day visualization.
+- **`main.py`**: Application entry point (now ~164 lines). Clean handler functions: `handle_add_entry()`, `handle_reuse_entry()`, `handle_view_entries()`, `handle_statistics()`, `handle_exit()`. Main loop uses handler dictionary for elegant dispatch.
 - **`ui.py`**: Terminal interface with 12+ typed functions. Input validation with constants (`MAX_NAME_LENGTH: int = 30`, `MAX_NUMERIC_VALUE: float = 10000.0`), display functions for menus/tables/stats, standardized error messages with "Error:" prefix and 2-second visibility.
 - **`data.py`**: Data persistence and analytics with pure computation functions. **Pure functions** (no I/O): `compute_totals()`, `compute_averages()`. **I/O wrappers**: `get_all_entries()`, `get_entries_by_date()`, `get_daily_totals()`, `get_weekly_averages()`, `scan_csv_for_corruption()`.
-- **`data.csv`**: Flat storage with append-only rows (Name, Protein, Fat, Carbs, Calories, DateTime).
-- **`visualization.ipynb`**: Visualizing Calories, Protein, Fat and Carb with a graph which is stored in the graph folder by calling the `create_nutrition_graph()` function inside the `main.py` file.
+- **`visualization.py`**: Graph generation module with `create_nutrition_graph()` function. Fetches 7-day entries, validates data with pandas, creates grouped bar chart showing Calories/Protein/Fat/Carbs, and saves to `graphs/graph.png` with proper error handling.
+- **`data.csv`**: Flat storage with append-only rows (Name, Protein, Fat, Carbs, Calories, DateTime). Includes 24 sample entries spanning 7 days for immediate testing.
 
 **Pure function benefits:**
 ```python
