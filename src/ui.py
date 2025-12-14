@@ -129,8 +129,8 @@ def get_string_input(message: str, max_length: int = MAX_NAME_LENGTH) -> str:
     while not is_valid:
         try: 
             string = input(message)
-            if not string or string.isdigit() or len(string) > MAX_NAME_LENGTH:
-                raise ValueError(f"Input Cannot be Empty, a Number, or Longer than {MAX_NAME_LENGTH} Characters.")
+            if not string or string.isdigit() or len(string) > max_length:
+                raise ValueError(f"Input Cannot be Empty, a Number, or Longer than {max_length} Characters.")
             is_valid = True
         except ValueError as e:
             print(f"Invalid Input. Please Enter a Valid String. {e}")
@@ -154,31 +154,12 @@ def get_float_input(message: str, max_value: float = MAX_NUMERIC_VALUE) -> float
             number = float(input(message))
             if number < 0:
                 raise ValueError("Input Cannot be Negative.")
-            if number > MAX_NUMERIC_VALUE:
-                raise ValueError(f"Input Cannot Exceed {MAX_NUMERIC_VALUE}.")
+            if number > max_value:
+                raise ValueError(f"Input Cannot Exceed {max_value}.")
             is_valid = True
         except ValueError as e:
             print(f"Invalid Input. Please Enter a Valid Number. {e}")
     return number
-
-def get_int_new(msg:str, err_msg:str, min_val:int=None, max_val:int=None) -> int:
-    """Get validated integer input from user within a specified range.
-    
-    Args:
-        msg: Prompt message to display
-        err_msg: Error message to display on invalid input
-        min_val: Minimum acceptable integer value
-        max_val: Maximum acceptable integer value
-    """
-    user_in = input(msg)
-    try:
-        user_int = int(user_in)
-        if (min_val is not None and user_int < min_val) or (max_val is not None and user_int > max_val):
-            raise ValueError(f"Input Out of Range. ({min_val})")
-        return user_int
-    except ValueError:
-        print(err_msg)
-        return get_int_new(msg, err_msg, min_val, max_val)
 
 def get_int_input(message: str, max_value: int = MAX_NUMERIC_VALUE) -> int:
     """Get validated integer input from user.
@@ -197,8 +178,8 @@ def get_int_input(message: str, max_value: int = MAX_NUMERIC_VALUE) -> int:
             integer = int(input(message))
             if integer < 0:
                 raise ValueError("Input Cannot be Negative.")
-            if integer > MAX_NUMERIC_VALUE:
-                raise ValueError(f"Input Cannot Exceed {int(MAX_NUMERIC_VALUE)}.")
+            if integer > max_value:
+                raise ValueError(f"Input Cannot Exceed {int(max_value)}.")
             is_valid = True
         except ValueError as e:
             print(f"Invalid Input. Please Enter a Valid Integer. {e}")

@@ -207,6 +207,7 @@ Project layout (excluding the `testing` folder):
 ```
 Nutrition_Tracker/
 ├── README.md                       # Project overview & user guide
+|–– requirements.txt                # Stores the required libraries
 ├── src/                            # Source code
 │   ├── main.py                     # Entry point & main loop routing
 │   ├── ui.py                       # Terminal UI & input validation
