@@ -344,27 +344,6 @@ Start → show_main_menu() → get_int_input() →
 • If 5: exit_message() → End
 
 
-### Flowchart 🗺️
-
-
-
-
-
-
-<img width="1597" height="2262" alt="Readme_Flowchart_Programming drawio (4)" src="function_tree.png" />
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## 🧩 User Manual
 
 The following section explains step-by-step how to use the **Nutrition Tracker** application.
