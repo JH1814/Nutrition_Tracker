@@ -829,5 +829,5 @@ Starting with core functionality (add entry, view entries) and gradually adding 
 
 The project successfully met all three core requirements while providing opportunities to explore advanced concepts like type hints, pure functions, and data visualization. The modular architecture and comprehensive documentation will serve as a solid foundation for future enhancements.
 
-## �📝 License
+## 📝 License
 This project is a graded group work for the programming foundation module.
