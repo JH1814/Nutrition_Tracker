@@ -579,6 +579,7 @@ python3 src/main.py
 **Visualization Module:**
 - `pandas`: DataFrame operations for data processing
 - `matplotlib.pyplot`: Creating and saving chart images
+- `import_ipynb`: access ipynb file inside .py file
 
 ### Project Structure & Module Organization
 
