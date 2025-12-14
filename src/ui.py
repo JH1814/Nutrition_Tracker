@@ -26,7 +26,8 @@ def show_statistics_menu() -> None:
     print("Statistics Menu:")
     print("1. Daily Totals")
     print("2. Weekly Averages")
-    print("3. Back to Main Menu")
+    print("3. Generate Nutrition Chart")
+    print("4. Return to Main Menu")
 
 def format_entries(entries: list[dict[str, str | float]], message: str) -> None:
     """Display nutrition entries in a formatted table.
@@ -91,6 +92,16 @@ def add_nutrition_failed(error: str) -> None:
     print(f"Error: Failed to Add Nutrition Data. Details: {error}")
     time.sleep(2)
 
+def chart_generation_successful(message: str) -> None:
+    clear_terminal()
+    print(message)
+    time.sleep(1)
+
+def chart_generation_failed(error: str) -> None:
+    # Do not clear immediately; show consistent error prefix
+    print(f"Error: Failed to Generate Chart. Details: {error}")
+    time.sleep(2)
+
 def invalid_choice() -> None:
     # Do not clear immediately; show consistent error prefix
     print("Error: Invalid Choice. Please Try Again.")
@@ -102,7 +113,7 @@ def exit_message() -> None:
     time.sleep(2)
     clear_terminal()
 
-def get_string_input(message: str) -> str:
+def get_string_input(message: str, max_length: int = MAX_NAME_LENGTH) -> str:
     """Get validated string input from user.
     
     Args:
@@ -125,7 +136,7 @@ def get_string_input(message: str) -> str:
             print(f"Invalid Input. Please Enter a Valid String. {e}")
     return string
 
-def get_float_input(message: str) -> float:
+def get_float_input(message: str, max_value: float = MAX_NUMERIC_VALUE) -> float:
     """Get validated float input from user.
     
     Args:
@@ -169,9 +180,7 @@ def get_int_new(msg:str, err_msg:str, min_val:int=None, max_val:int=None) -> int
         print(err_msg)
         return get_int_new(msg, err_msg, min_val, max_val)
 
-        
-
-def get_int_input(message: str) -> int:
+def get_int_input(message: str, max_value: int = MAX_NUMERIC_VALUE) -> int:
     """Get validated integer input from user.
     
     Args:

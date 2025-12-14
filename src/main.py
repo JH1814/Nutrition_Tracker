@@ -6,6 +6,8 @@ Each handler function manages a specific user operation (add, view, statistics, 
 import data
 import ui
 import datetime
+import import_ipynb
+import visualization
 
 
 def handle_add_entry() -> None:
@@ -91,7 +93,7 @@ def handle_statistics() -> None:
     
     while stats_running:
         ui.show_statistics_menu()
-        stats_choice = ui.get_int_input("Select Statistics Type: ")
+        stats_choice = ui.get_int_input("Select Statistics Type: ", max_value=4)
 
         try:
             if stats_choice == 1:
@@ -103,6 +105,9 @@ def handle_statistics() -> None:
                 ui.show_entries(averages, "Weekly Average Intake", "No Entries Found for this Week")
                 stats_running = False
             elif stats_choice == 3:
+                visualization.create_nutrition_graph()
+                stats_running = False
+            elif stats_choice == 4:
                 ui.clear_terminal()
                 stats_running = False
             else:
@@ -148,7 +153,7 @@ def main() -> None:
     while is_running:
         data.check_csv_file_exists()
         ui.show_main_menu()
-        choice = ui.get_int_input("Enter your Choice: ")
+        choice = ui.get_int_input("Enter your Choice: ", max_value=5)
         
         if choice == 5:
             is_running = handle_exit()

@@ -17,7 +17,7 @@ The program validates the inputs, saves them into a file, and allows users to vi
 
 3.	As a user, I want to **view my daily and weekly totals** to understand my intake.
 
-4.	As a user, I want my data to be **saved and loaded automatically**, so I don’t lose progress.
+4.	As a user, I want my data to be **stored permanently**, so I don’t lose progress.
 
 5.	As a user, I want to **be notified** when I enter **invalid data** (e.g., wrong date or negative amount) so data is stored correctly.
 
@@ -211,6 +211,7 @@ Nutrition_Tracker/
 │   ├── main.py                     # Entry point & main loop routing
 │   ├── ui.py                       # Terminal UI & input validation
 │   ├── data.py                     # Persistence + lookups + analytics
+|   |–– visualization.ipynb         # Create graphs based on entries from the data.csv file
 │   └── data/                       # Data storage directory
 │       └── data.csv                # Persistent nutrition entries (CSV)
 ```
@@ -219,18 +220,6 @@ Nutrition_Tracker/
 - **`ui.py` (Presentation / Interaction)**: Terminal interface with comprehensive type hints. Renders menus & tables, performs input validation with upper bounds (`MAX_NAME_LENGTH = 30`, `MAX_NUMERIC_VALUE = 10000.0`). All functions fully documented with Args/Returns/Note sections. Implements standardized error messages with "Error:" prefix and 2-second visibility.
 - **`data.py` (Data & Analytics)**: Persistence layer with full type hints including `Optional` imports. Handles CSV operations with `newline=''` parameter, entry queries, daily/weekly analytics, and corruption scanning. All functions documented with comprehensive docstrings.
 - **`src/data/data.csv` (Storage)**: Flat append-only store of nutrition records with columns: Name, Protein, Fat, Carbs, Calories, DateTime.
-
-**Key improvements implemented:**
-- Comprehensive type hints on all functions (e.g., `list[dict[str, str | float]]`)
-- Module-level and function-level docstrings following Google/NumPy style
-**Key improvements implemented:**
-- Comprehensive type hints on all functions (e.g., `list[dict[str, str | float]]`)
-- Module-level and function-level docstrings following Google/NumPy style
-- Validation constants for consistent input bounds
-- Enhanced error handling with standardized messaging
-- CSV best practices with newline parameter for cross-platform compatibility
-- PEP 8 compliant snake_case naming throughout
-
 - **`main.py`**: Application entry point (now ~150 lines, was ~110 in main() alone). Clean handler functions: `handle_add_entry()`, `handle_reuse_entry()`, `handle_view_entries()`, `handle_statistics()`, `handle_exit()`. Main loop uses handler dictionary for elegant dispatch.
 - **`ui.py`**: Terminal interface with 12+ typed functions. Input validation with constants (`MAX_NAME_LENGTH: int = 30`, `MAX_NUMERIC_VALUE: float = 10000.0`), display functions for menus/tables/stats, standardized error messages with "Error:" prefix and 2-second visibility.
 - **`data.py`**: Data persistence and analytics with pure computation functions. **Pure functions** (no I/O): `compute_totals()`, `compute_averages()`. **I/O wrappers**: `get_all_entries()`, `get_entries_by_date()`, `get_daily_totals()`, `get_weekly_averages()`, `scan_csv_for_corruption()`.
@@ -255,13 +244,13 @@ This layout minimizes indirection while keeping responsibilities clear. Type hin
 │ if __name__ == "__main__"  │
 │        main()              │
 └────────────┬───────────────┘
-                         │
-                         ▼
+             │
+             ▼
 ┌────────────────────────────┐
 │ is_running = True          │
 └────────────┬───────────────┘
-                         │
-                         ▼
+             │
+             ▼
 ┌──────────────────────────────────────────────────────────┐
 │ MAIN LOOP (while is_running)                             │
 │  1. data.check_csv_file_exists()                         │
@@ -269,73 +258,78 @@ This layout minimizes indirection while keeping responsibilities clear. Type hin
 │  3. choice = ui.get_int_input("Enter your Choice:")      │
 │  4. Route by choice                                      │
 └────────────┬─────────────────────────────────────────────┘
-                         │
-     ┌─────────┼───────────────────────────────────────────────────────────────────────────────┐
-     │         │                                                                                 │
-     │         │ Choice == 1 (Add Entry)                                                         │
-     │         │   ┌──────────────────────────────────────────────────────────────────────────┐  │
-     │         │   │ ui.clear_terminal()                                                       │  │
-     │         │   │ name = ui.get_string_input() (≤30 chars)                                  │  │
-     │         │   │ protein = ui.get_float_input()                                            │  │
-     │         │   │ fat = ui.get_float_input()                                                │  │
-     │         │   │ carbs = ui.get_float_input()                                              │  │
-     │         │   │ calories = ui.get_float_input()                                           │  │
-     │         │   │ data.write_nutrition_data([... dt.now()])                                 │  │
-     │         │   │ ui.add_nutrition_successful() | ui.add_nutrition_failed(e)                │  │
-     │         │   └──────────────────────────────────────────────────────────────────────────┘  │
-     │         │                                                                                 │
-     │         │ Choice == 2 (Reuse Existing Entry)                                              │
-     │         │   ┌──────────────────────────────────────────────────────────────────────────┐  │
-     │         │   │ ui.clear_terminal()                                                       │  │
-     │         │   │ recipe = ui.get_string_input()                                            │  │
-     │         │   │ entry = data.get_entry_by_name(recipe)                                    │  │
-     │         │   │ IF entry found:                                                           │  │
-     │         │   │   data.write_nutrition_data(copy + new timestamp)                         │  │
-     │         │   │   ui.add_nutrition_successful()                                           │  │
-     │         │   │ ELSE: ui.add_nutrition_failed("Recipe Not Found")                         │  │
-     │         │   └──────────────────────────────────────────────────────────────────────────┘  │
-     │         │                                                                                 │
-     │         │ Choice == 3 (View Entries)                                                      │
-     │         │   ┌──────────────────────────────────────────────────────────────────────────┐  │
-     │         │   │ ui.clear_terminal()                                                       │  │
-     │         │   │ entries = data.get_all_entries()                                          │  │
-     │         │   │ ui.show_entries(entries, "Nutrition Entries:", "No Entries Found.")  │  │
-     │         │   └──────────────────────────────────────────────────────────────────────────┘  │
-     │         │                                                                                 │
-     │         │ Choice == 4 (Statistics Submenu)                                                │
-     │         │   ┌──────────────────────────────────────────────────────────────────────────┐  │
-     │         │   │ stats_running = True                                                      │  │
-     │         │   │ WHILE stats_running:                                                      │  │
-     │         │   │   ui.show_statistics_menu()                                               │  │
-     │         │   │   stats_choice = ui.get_int_input()                                       │  │
-     │         │   │   IF 1 (Daily Totals):                                                    │  │
-     │         │   │     totals = data.get_daily_totals()                                      │  │
-     │         │   │     ui.show_entries(totals, "Daily Total", "No Entries for Today")   │  │
-     │         │   │     stats_running = False                                                 │  │
-     │         │   │   IF 2 (Weekly Averages):                                                 │  │
-     │         │   │     averages = data.get_weekly_averages()                                 │  │
-     │         │   │     ui.show_entries(averages, "Weekly Avg", "No Entries this Week")  │  │
-     │         │   │     stats_running = False                                                 │  │
-     │         │   │   IF 3 (Back): stats_running = False                                      │  │
-     │         │   └──────────────────────────────────────────────────────────────────────────┘  │
-     │         │                                                                                 │
-     │         │ Choice == 5 (Exit)                                                              │
-     │         │   ┌──────────────────────────────────────────────────────────────────────────┐  │
-     │         │   │ ui.exit_message()                                                         │  │
-     │         │   │ is_running = False                                                        │  │
-     │         │   └──────────────────────────────────────────────────────────────────────────┘  │
-     │         │                                                                                 │
-     │         │ ELSE (Invalid Choice) → ui.invalid_choice()                                     │
-     └─────────┘                                                                                 │
-                         │                                                                                 │
-                         ▼                                                                                 │
-┌────────────────────────────┐                                                                 │
-│ is_running == False ?      │◀────────────────────────────────────────────────────────────────┘
-└────────────┬───────────────┘
-                         │YES
-                         ▼
+             │
+     ┌───────┼──────────────────────────────────────────────────────────────────────────────–––─┐
+     │       │                                                                                  │
+     │       │ Choice == 1 (Add Entry)                                                          │
+     │       │   ┌──────────────────────────────────────────────────────────────────────────┐   │
+     │       │   │ ui.clear_terminal()                                                      │   │
+     │       │   │ name = ui.get_string_input() (≤30 chars)                                 │   │
+     │       │   │ protein = ui.get_float_input()                                           │   │
+     │       │   │ fat = ui.get_float_input()                                               │   │
+     │       │   │ carbs = ui.get_float_input()                                             │   │
+     │       │   │ calories = ui.get_float_input()                                          │   │
+     │       │   │ data.write_nutrition_data([... dt.now()])                                │   │
+     │       │   │ ui.add_nutrition_successful() | ui.add_nutrition_failed(e)               │   │
+     │       │   └──────────────────────────────────────────────────────────────────────────┘   │
+     │       │                                                                                  │
+     │       │ Choice == 2 (Reuse Existing Entry)                                               │
+     │       │   ┌────────────────────────────────────────────────────────────────────────── ┐  │
+     │       │   │ ui.clear_terminal()                                                       │  │
+     │       │   │ recipe = ui.get_string_input()                                            │  │
+     │       │   │ entry = data.get_entry_by_name(recipe)                                    │  │
+     │       │   │ IF entry found:                                                           │  │
+     │       │   │   data.write_nutrition_data(copy + new timestamp)                         │  │
+     │       │   │   ui.add_nutrition_successful()                                           │  │
+     │       │   │ ELSE: ui.add_nutrition_failed("Recipe Not Found")                         │  │
+     │       │   └────────────────────────────────────────────────────────────────────────── ┘  │
+     │       │                                                                                  │
+     │       │ Choice == 3 (View Entries)                                                       │
+     │       │   ┌──────────────────────────────────────────────────────────────────────────┐   │
+     │       │   │ ui.clear_terminal()                                                      │   │
+     │       │   │ entries = data.get_all_entries()                                         │   │
+     │       │   │ ui.show_entries(entries, "Nutrition Entries:", "No Entries Found.")      │   │
+     │       │   └──────────────────────────────────────────────────────────────────────────┘   │
+     │       │                                                                                  │
+     │       │ Choice == 4 (Statistics Submenu)                                                 │
+     │       │   ┌───────────────────────────────────────────────────────────────────────── ─┐  │
+     │       │   │ stats_running = True                                                      │  │
+     │       │   │ WHILE stats_running:                                                      │  │
+     │       │   │   ui.show_statistics_menu()                                               │  │
+     │       │   │   stats_choice = ui.get_int_input()                                       │  │
+     │       │   │   IF 1 (Daily Totals):                                                    │  │
+     │       │   │     totals = data.get_daily_totals()                                      │  │
+     │       │   │     ui.show_entries(totals, "Daily Total Intake", "No Entries Today")     │  │
+     │       │   │     stats_running = False                                                 │  │
+     │       │   │   IF 2 (Weekly Averages):                                                 │  │
+     │       │   │     averages = data.get_weekly_averages()                                 │  │
+     │       │   │     ui.show_entries(averages, "Weekly Average Intake", "No Entries Week") │  │
+     │       │   │     stats_running = False                                                 │  │
+     │       │   │   IF 3 (Create Nutrition Graph):                                          │  │
+     │       │   │     visualization.create_nutrition_graph()                                │  │
+     │       │   │     stats_running = False                                                 │  │
+     │       │   │   IF 4 (Back to Main Menu):                                               │  │
+     │       │   │     ui.clear_terminal()                                                   │  │
+     │       │   │     stats_running = False                                                 │  │
+     │       │   └──────────────────────────────────────────────────────────────────────────–┘  │
+     │       │                                                                                  │
+     │       │ Choice == 5 (Exit)                                                               │
+     │       │   ┌──────────────────────────────────────────────────────────────────────────┐   │
+     │       │   │ ui.exit_message()                                                        │   │
+     │       │   │ is_running = False                                                       │   │
+     │       │   └──────────────────────────────────────────────────────────────────────────┘   │
+     │       │                                                                                  │
+     │       │ ELSE (Invalid Choice) → ui.invalid_choice()                                      │
+     └───────┘                                                                                  │
+                         │                                                                      │
+                         ▼                                                                      │
+ ┌────────────────────────────┐                                                                 │
+ │ is_running == False ?      │◀────────────────────────────────────────────────────────────────┘
+ └────────────┬───────────────┘
+              │YES
+              ▼
 ┌────────────────────────────┐
-│          EXIT               │
+│          EXIT              │
 └────────────────────────────┘
                          │NO (loop) re-enters main while
                          └──▶ CONTINUE LOOP
@@ -357,7 +351,7 @@ Start → show_main_menu() → get_int_input() →
 
 
 
-<img width="1597" height="2262" alt="Readme_Flowchart_Programming drawio (4)" src="https://github.com/user-attachments/assets/455ef8fd-7ca1-41c0-8ee9-8e495540cad1" />
+<img width="1597" height="2262" alt="Readme_Flowchart_Programming drawio (4)" src="https://gemini.google.com/share/7b65162d8411" />
 
 
 
@@ -454,17 +448,66 @@ Total calories this week: 1850 kcal
 ### 5️. Show Statistics 📊
 
 Select option **4** from the main menu.  
-The program will display simple statistics based on your stored data.
+A submenu will appear with three statistical options:
+
+```
+Statistics Menu:
+1. Daily Totals
+2. Weekly Averages
+3. Create Nutrition Graph
+4. Back to Main Menu
+```
+
+#### Option 1: Daily Totals 📈
+Shows the total intake of Protein, Fat, Carbs, and Calories **for today**.
 
 Example output:
 ```
---- Weekly Statistics ---
-Average calories/day: 925 kcal
-Highest entry: Pizza (850 kcal)
-Lowest entry: Salad (300 kcal)
+Daily Total Intake
+Name          Protein    Fat        Carbs      Calories
+Daily Total   85.5g      32.2g      220.0g     1850.0 kcal
 ```
 
-➡️ This helps you analyze your nutrition over time.
+#### Option 2: Weekly Averages 📊
+Shows the **average daily intake** over the last 7 days for Protein, Fat, Carbs, and Calories.
+
+Example output:
+```
+Weekly Average Intake
+Name          Protein    Fat        Carbs      Calories
+Weekly Avg    62.1g      24.5g      185.3g     1420.5 kcal
+```
+
+#### Option 3: Create Nutrition Graph 📉
+Generates a visual graph showing your **daily macronutrient intake for the last 7 days**.
+
+**What happens:**
+1. The program retrieves all entries from the past 7 days
+2. Validates and processes the data (handles missing values gracefully)
+3. Groups entries by date and sums up daily totals
+4. Creates a colorful bar chart showing Calories, Protein, Fat, and Carbs per day
+5. Saves the graph as `graph.png` in the `graphs/` directory
+6. Displays a success message with the file path
+
+**Example success message:**
+```
+Chart saved to /workspaces/Nutrition_Tracker/graphs/graph.png
+```
+
+**Viewing the graph:**
+- Navigate to the `graphs/` folder in your file explorer
+- Open `graph.png` to view the visualization
+- The graph displays daily totals in a grouped bar chart format
+
+**Requirements for the graph:**
+- You must have **at least one entry within the last 7 days** for a graph to be generated
+- All numeric values (Calories, Protein, Fat, Carbs) must be valid numbers
+- Entries with missing or invalid data are automatically skipped
+
+#### Option 4: Back to Main Menu
+Returns to the main menu without generating any statistics.
+
+➡️ Use options 1–2 to track daily/weekly intake, and option 3 to visualize trends over time.
 
 ---
 
@@ -483,15 +526,24 @@ Goodbye!
 
 ---
 
-### Summary of Menu Options
+### Summary of Menu Options (Main)
 
 | Option | Description |
 |:--:|:--|
 | 1 | Add a new food entry |
-| 2 | View all entries |
-| 3 | View entries of the current week |
-| 4 | Show weekly statistics |
+| 2 | Reuse an existing entry by name |
+| 3 | View all entries |
+| 4 | View statistics (submenu) |
 | 5 | Exit the program |
+
+### Summary of Menu Options (Statistics Submenu)
+
+| Option | Description |
+|:--:|:--|
+| 1 | Show daily totals for today |
+| 2 | Show weekly average intake |
+| 3 | Create nutrition graph for last 7 days |
+| 4 | Back to main menu |
 
 ---
 
@@ -505,6 +557,8 @@ Goodbye!
 - **Upper bounds protection**: System prevents unrealistic values (e.g., 50,000 calories) by capping inputs at 10,000.
 - **CSV format**: Data stored with proper `newline=''` parameter for cross-platform compatibility.
 - **Documentation**: All functions include comprehensive docstrings with Args/Returns/Note sections.
+- **Graph generation**: Requires `pandas` and `matplotlib`. Run `pip install -r requirements.txt` to install.
+- **Visual data analysis**: Use the graph feature to identify eating patterns and nutrition trends.
 
 ---
 
@@ -513,7 +567,7 @@ Enjoy tracking your meals and managing your daily calories with the **Nutrition 
 ## ⚙️ Implementation
 
 ### Technology
-- **Python 3.x**: Standard library only, no external dependencies
+- **Python 3.x**: Standard library only for core app, plus `pandas` and `matplotlib` for visualization
 - **Type hints**: Comprehensive typing throughout with `Optional`, `list[dict[str, str | float]]`, etc.
 - **Docstrings**: Module and function-level documentation following Google/NumPy style
 - **PEP 8 compliance**: snake_case naming conventions throughout
@@ -521,15 +575,109 @@ Enjoy tracking your meals and managing your daily calories with the **Nutrition 
 - **Handler pattern**: Menu dispatch via dictionary routing (src/main.py)
 
 ### How to Run
-From the project root:
 
+**1. Install Dependencies**
+```bash
+pip install -r requirements.txt
+```
+
+This installs:
+- `pandas`: Data processing and manipulation (used in visualization)
+- `matplotlib`: Graph and visualization generation
+
+**2. Run the Application**
 ```bash
 python3 src/main.py
 ```
 
 ### Libraries Used
+
+**Core Application:**
 - `os`, `time`: UI/terminal control and pauses
 - `csv`, `datetime`: File I/O and timestamps in data layer
+
+**Visualization Module:**
+- `pandas`: DataFrame operations for data processing
+- `matplotlib.pyplot`: Creating and saving chart images
+
+### Project Structure & Module Organization
+
+```
+src/
+├── main.py              # Application entry point & main loop
+├── ui.py                # Terminal UI & input validation
+├── data.py              # Data persistence & analytics
+├── visualization.ipynb  # Notebook version of visualization
+└── data/
+    └── data.csv         # Persistent CSV storage
+```
+
+**Module Responsibilities:**
+
+| Module | Responsibility | Key Functions |
+|:---|:---|:---|
+| `main.py` | Application orchestration & user routing | `main()`, `handle_add_entry()`, `handle_statistics()` |
+| `ui.py` | Terminal interface & input validation | `get_string_input()`, `show_main_menu()`, `show_entries()` |
+| `data.py` | CSV persistence & analytics | `write_nutrition_data()`, `get_daily_totals()`, `get_weekly_averages()` |
+| `visualization.ipynb` | Graph generation | `create_nutrition_graph()` |
+
+### Importing the Visualization Module
+
+**In `main.py`:**
+```python
+import import_ipynb
+import visualization
+```
+
+This imports `visualization.ipynb.
+
+**To use the graph function:**
+```python
+visualization.create_nutrition_graph()
+```
+
+### Dependencies & Requirements
+
+**`requirements.txt` contains:**
+```
+pandas>=1.5.0
+matplotlib>=3.5.0
+```
+
+**Install all dependencies:**
+```bash
+pip install -r requirements.txt
+```
+
+**Check installed packages:**
+```bash
+pip list | grep -E "pandas|matplotlib"
+```
+
+### Visualization Pipeline
+
+The `create_nutrition_graph()` function:
+
+1. **Fetch data**: Retrieves all entries from the last 7 days via `data.get_entries_within_week()`
+2. **Create DataFrame**: Converts CSV rows into a pandas DataFrame for easy manipulation
+3. **Validate & clean**: 
+   - Converts DateTime strings to proper datetime objects
+   - Converts Calories, Protein, Fat, Carbs to numeric types
+   - Drops rows with missing DateTime values
+   - Fills remaining NaN values with 0
+4. **Group & aggregate**: Sums daily totals by date using `groupby()`
+5. **Plot**: Creates a 12x6 inch grouped bar chart with:
+   - X-axis: Dates from the past 7 days
+   - Y-axis: Grams (for Calories, Protein, Fat, Carbs)
+   - Colors: Automatic color scheme from matplotlib
+   - Grid: Light horizontal grid for readability
+6. **Save**: Outputs to `graphs/graph.png` in the working directory
+7. **Display**: Shows success message with file path
+
+**Error handling in visualization:**
+- No entries in last 7 days → displays "No entries found" message
+- All rows filtered out due to invalid data → displays "No valid entries found" message
+- Graph save fails → displays error message with exception details
 
 ### Code Quality Features
 - **Validation constants**: `MAX_NAME_LENGTH = 30`, `MAX_NUMERIC_VALUE = 10000.0`
@@ -539,6 +687,46 @@ python3 src/main.py
 - **Detailed docstrings**: Every function documented with purpose, arguments, returns, and notes
 - **Handler pattern**: 6 focused functions replacing monolithic main() (110 → ~163 lines with improved readability)
 - **Pure functions**: Separated computation from I/O (compute_totals, compute_averages) for 100% testability
+- **Data validation in visualization**: Graceful handling of malformed data with `errors='coerce'`
+
+## ⚠️ Known Limitations
+
+### Data Management
+- **No entry editing**: Once saved, entries cannot be modified (only new entries can be added)
+- **No entry deletion**: Individual entries cannot be removed from the CSV file
+- **No data backup**: Manual backup of `data.csv` required; no automatic backup mechanism
+- **Single CSV file**: All data stored in one file; no database support for larger datasets
+- **No data export**: Cannot export data to other formats (JSON, Excel, etc.)
+
+### User Interface
+- **Terminal-only interface**: No graphical user interface (GUI); relies entirely on console
+- **Graph viewing**: Generated graphs must be manually opened from file explorer; not displayed in terminal
+- **No search functionality**: Limited to search by exact name only; no advanced filtering
+- **Single-user system**: No user accounts, authentication, or multi-user support
+- **Platform-dependent**: Terminal clearing works differently on Windows vs Unix systems
+
+### Functionality
+- **No meal planning**: Cannot set goals or plan future meals
+- **No nutritional recommendations**: No guidance on daily intake targets or health goals
+- **Limited statistics**: Only daily totals and weekly averages; no monthly/yearly analysis
+- **Graph requires dependencies**: Visualization feature needs pandas and matplotlib (not standard library)
+- **7-day limit for graphs**: Graph generation only works with last 7 days of data
+- **No time-based filtering**: Cannot view entries by specific date range (except today or last 7 days)
+
+### Technical
+- **CSV corruption handling**: Corrupted rows are skipped but not automatically fixed
+- **No concurrent access protection**: Multiple instances could corrupt data if run simultaneously
+- **Limited validation recovery**: Invalid data is rejected but not guided correction
+- **Memory-based operations**: Entire CSV loaded into memory (may be slow with thousands of entries)
+
+### Future Enhancement Opportunities
+These limitations present opportunities for future development:
+- Database integration (SQLite, PostgreSQL)
+- Web-based interface with real-time graphs
+- Data import/export in multiple formats
+- Entry editing and deletion with audit trail
+- Advanced filtering and search capabilities
+- Goal setting and progress tracking
 
 ## 👥 Team & Contributions
 
@@ -556,5 +744,90 @@ This project is intended to:
 - Produce clean, well-structured, and documented code suitable for future teamwork
 - Encourage frequent, incremental commits to track progress
 
-## 📝 License
+## � Discussion
+
+### Design Decisions
+
+**Module Separation**  
+We chose to separate the application into three core modules (`main.py`, `ui.py`, `data.py`) to follow the single responsibility principle. This separation made the code easier to test, debug, and maintain. Each module has a clear purpose, reducing coupling and improving readability.
+
+**Handler Pattern**  
+Instead of a monolithic `main()` function with nested if-statements, we implemented a handler pattern with dedicated functions for each menu choice. This reduced the main function from 110+ lines to ~50 lines while improving code clarity and making it easier to add new features.
+
+**Pure Functions**  
+We separated computation logic (`compute_totals()`, `compute_averages()`) from I/O operations. This design choice improved testability—pure functions can be tested without file system access—and made the analytics logic reusable across different contexts.
+
+**CSV Over Database**  
+We deliberately chose CSV for data persistence instead of a database (SQLite, etc.) to keep the project simple and aligned with the learning objectives. While this limits scalability, it demonstrates fundamental file I/O concepts and requires no external dependencies for the core application.
+
+**Validation Constants**  
+We defined `MAX_NAME_LENGTH` and `MAX_NUMERIC_VALUE` as module-level constants to ensure consistent validation across the application. This makes it easy to adjust limits globally and documents constraints clearly.
+
+### Challenges Faced
+
+**CSV Corruption Handling**  
+Managing corrupted or malformed CSV data was more complex than anticipated. We implemented multiple safety layers: validation during write, skipping invalid rows during read, and a dedicated corruption scanner. This defensive programming ensures the app remains functional even with imperfect data.
+
+**Cross-Platform Compatibility**  
+Terminal clearing behaves differently on Windows (`cls`) vs. Unix (`clear`). We resolved this using `os.name` detection, but this highlighted the challenges of building truly portable console applications.
+
+**Graph Display in Terminal**  
+We initially hoped to display graphs directly in the terminal but discovered that matplotlib requires a GUI backend or file output. We opted to save graphs as PNG files, which works reliably but requires users to manually open the files.
+
+### Lessons Learned
+
+**Type Hints Are Valuable**  
+Adding comprehensive type hints (`list[dict[str, str | float]]`) significantly improved our development experience. IDEs provided better autocomplete, and type errors were caught earlier during development.
+
+**Docstrings Clarify Intent**  
+Writing detailed docstrings forced us to think carefully about each function's purpose and contract. This documentation proved invaluable when team members needed to understand or modify code they didn't write.
+
+**Input Validation Is Critical**  
+We underestimated how many edge cases exist in user input. Adding upper bounds, type checking, and length limits prevented numerous potential bugs and improved the user experience by providing clear error messages.
+
+**Incremental Development Works**  
+Starting with core functionality (add entry, view entries) and gradually adding features (statistics, visualization) allowed us to maintain a working application throughout development. This incremental approach made testing easier and reduced integration problems.
+
+### What Went Well
+
+- **Clean Architecture**: The modular structure made collaborative development smoother
+- **Comprehensive Validation**: Input checking prevented most data quality issues
+- **Error Handling**: Try-except blocks and automatic CSV recreation improved reliability
+- **Documentation**: Detailed README and in-code documentation made the project accessible
+- **Pure Functions**: Separating computation from I/O simplified testing and debugging
+
+### What Could Be Improved
+
+**User Experience**
+- Terminal-only interface is limiting; a GUI would be more user-friendly
+- Graph generation could integrate directly into the UI instead of requiring file navigation
+- More detailed error messages with correction suggestions would help users
+
+**Data Management**
+- No ability to edit or delete entries limits flexibility
+- Lack of data export options (JSON, Excel) reduces interoperability
+- Single CSV file doesn't scale well for large datasets
+
+**Functionality**
+- Statistics limited to daily/weekly; no monthly or yearly analysis
+- No goal-setting or nutritional recommendations
+- No search or filter beyond exact name matching
+- Graph limited to 7 days of data
+
+**Technical**
+- No concurrent access protection could cause data corruption with simultaneous users
+- Memory-based operations (loading entire CSV) may slow down with thousands of entries
+- Better separation between business logic and presentation could improve testability
+
+### Reflection on Learning Objectives
+
+**Interactive App**: Successfully implemented a multi-level menu system with validated user input and clear feedback mechanisms.
+
+**Data Validation**: Exceeded basic requirements with comprehensive validation including type checking, bounds validation, length limits, and CSV integrity scanning.
+
+**File Processing**: Demonstrated proper CSV handling with `newline=''` parameter, DictReader/Writer usage, automatic file creation, and graceful error recovery.
+
+The project successfully met all three core requirements while providing opportunities to explore advanced concepts like type hints, pure functions, and data visualization. The modular architecture and comprehensive documentation will serve as a solid foundation for future enhancements.
+
+## �📝 License
 This project is a graded group work for the programming foundation module.
